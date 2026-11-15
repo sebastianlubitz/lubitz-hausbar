@@ -261,6 +261,7 @@ li.garnish .what { color: var(--muted); }
         <button class="chip-btn" data-src="alle" aria-pressed="true">Alle Drinks</button>
         <button class="chip-btn" data-src="mine" aria-pressed="false">House Specials</button>
         <button class="chip-btn" data-src="now" aria-pressed="false">Jetzt verfügbar</button>
+        <button class="chip-btn" data-src="need" aria-pressed="false">Zutaten benötigt</button>
       </div>
     </div>
     <div class="toolbar">
@@ -787,7 +788,10 @@ function renderRecipes() {
   const q = norm(filt.q);
   const all = RECIPES.map((r) => ({ r, s: recipeState(r) }));
   const list = all
-    .filter(({ r, s }) => filt.src === 'alle' || (filt.src === 'now' ? ready() && s.ok : r.src === filt.src))
+    .filter(({ r, s }) => filt.src === 'alle'
+      || (filt.src === 'now' ? ready() && s.ok
+        : filt.src === 'need' ? ready() && !s.ok
+        : r.src === filt.src))
     .filter(({ r, s }) => !q || norm(r.name).includes(q) || s.res.some(({ i, x }) =>
       norm(i.l).includes(q) || norm(i.fresh).includes(q) || norm(KINDS[i.k]).includes(q) || (x.bottle && norm(x.bottle.name).includes(q))));
   const nowCount = all.filter(({ s }) => s.ok).length;
