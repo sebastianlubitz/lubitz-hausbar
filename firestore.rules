@@ -1,0 +1,15 @@
+rules_version = '2';
+
+// Jeder darf die Karte lesen (Bestand und Vorrat), nur du darfst schreiben.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /bottles/{id} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == "USEyrumwCObpfiQKIGHdISjwn7k2";
+    }
+    match /pantry/{id} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == "USEyrumwCObpfiQKIGHdISjwn7k2";
+    }
+  }
+}

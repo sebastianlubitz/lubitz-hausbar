@@ -13,4 +13,4 @@ export const firebaseConfig = {
 
 // Deine Nutzer-ID. Nach der ersten Anmeldung zeigt die Seite sie dir an.
 // Nur dieses Konto darf Bestand und Vorrat ändern.
-export const OWNER_UID = "";
+export const OWNER_UID = "USEyrumwCObpfiQKIGHdISjwn7k2";
