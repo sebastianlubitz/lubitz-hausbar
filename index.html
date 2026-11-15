@@ -317,8 +317,9 @@ li.garnish .what { color: var(--muted); }
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getFirestore, doc, collection, onSnapshot, setDoc, updateDoc, deleteDoc, addDoc, writeBatch } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-import { firebaseConfig, OWNER_UID } from './config.js';
-import { SEED_BOTTLES, SEED_PANTRY } from './seed.js';
+// ?v=… bei jeder Änderung an config.js oder seed.js hochzählen, damit Browser die neue Datei laden
+import { firebaseConfig, OWNER_UID } from './config.js?v=2';
+import { SEED_BOTTLES, SEED_PANTRY } from './seed.js?v=2';
 
 const CATS = ['Rum', 'Scotch Whisky', 'Irish, Rye & Co.', 'Weitere Spirituosen', 'Liköre', 'Wermut & Aperitif', 'Bitters', 'Sirup'];
 const KINDS = {
