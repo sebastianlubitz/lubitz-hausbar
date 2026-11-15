@@ -363,6 +363,8 @@ const freshLabel = (k) => (FRESH.find((f) => f.k === k) || { l: k }).l;
 const B = (a, k, p, l, n) => ({ a, k, p: p || null, l: l || null, n: n || null });
 const F = (a, t, n, opt) => ({ a, fresh: t, n: n || null, opt: !!opt });
 const G = (t, a) => ({ a: a || '', garnish: t });
+/* Mix-Scotch laut Grundausstattung; solange er fehlt, springt die angegebene Flasche ein */
+const ADELPHI = (ing) => Object.assign(ing, { want: 'Adelphi', wantL: 'Adelphi Private Stock' });
 
 const RECIPES = [
   /* Meine Rezepte */
@@ -402,7 +404,7 @@ const RECIPES = [
     B('4,5 cl', 'rye', 'bulleit-rye'), B('3 cl', 'campari', 'campari'), B('3 cl', 'sweet-vermouth', 'carpano-antica'), G('Orangenzeste')],
     steps: 'Wie Negroni: auf Eis rühren, im Tumbler auf frisches Eis, Orangenzeste.' },
   { id: 'robroy', name: 'Rob Roy', src: 'vorschlag', m: 'Gerührt', gl: 'Coupette', ings: [
-    B('5 cl', 'scotch', 'glenfarclas-12'), B('2,5 cl', 'sweet-vermouth', 'martini-rosso'), B('2 Dashes', 'bitters-angostura', 'angostura')],
+    ADELPHI(B('5 cl', 'scotch', 'glenfarclas-12')), B('2,5 cl', 'sweet-vermouth', 'martini-rosso'), B('2 Dashes', 'bitters-angostura', 'angostura')],
     steps: 'Kalt rühren, in die Coupette abseihen.' },
   { id: 'saratoga', name: 'Saratoga', src: 'vorschlag', m: 'Gerührt', gl: 'Coupette', ings: [
     B('3 cl', 'rye', 'rittenhouse'), B('3 cl', 'cognac', 'courvoisier'), B('3 cl', 'sweet-vermouth', 'martini-rosso'), B('2 Dashes', 'bitters-angostura', 'angostura')],
@@ -411,7 +413,7 @@ const RECIPES = [
     B('5 cl', 'gin', 'tanqueray'), B('3 cl', 'sweet-vermouth', 'martini-rosso'), B('0,5 cl', 'triple-sec', 'triple-sec'), B('1 Dash', 'bitters-orange', 'angostura-orange'), G('Orangenzeste')],
     steps: 'Kalt rühren, in die Coupette abseihen, Orangenzeste darüber ausdrücken.' },
   { id: 'godfather', name: 'Godfather', src: 'vorschlag', m: 'Gerührt', gl: 'Tumbler', ings: [
-    B('4,5 cl', 'scotch', 'dalwhinnie-15', null, 'oder Glenfarclas 12'), B('1,5 cl', 'amaretto', 'amaretto')],
+    ADELPHI(B('4,5 cl', 'scotch', 'dalwhinnie-15')), B('1,5 cl', 'amaretto', 'amaretto')],
     steps: 'Im Tumbler auf Eis rühren.' },
   { id: 'blackrussian', name: 'Black Russian', src: 'vorschlag', m: 'Gerührt', gl: 'Tumbler', ings: [
     B('5 cl', 'vodka', 'our-vodka'), B('2 cl', 'coffee-liqueur', 'kahlua')],
@@ -446,7 +448,7 @@ const RECIPES = [
     B('4,5 cl', 'vodka', 'our-vodka'), B('1,5 cl', 'amaretto', 'amaretto')],
     steps: 'Im Tumbler auf Eis rühren.' },
   { id: 'smokyrobroy', name: 'Smoky Rob Roy', src: 'claude', m: 'Gerührt', gl: 'Coupette', ings: [
-    B('5 cl', 'scotch', 'glenfarclas-12'), B('2,5 cl', 'sweet-vermouth', 'carpano-antica'), B('2 Dashes', 'bitters-orange', 'angostura-orange'),
+    ADELPHI(B('5 cl', 'scotch', 'glenfarclas-12')), B('2,5 cl', 'sweet-vermouth', 'carpano-antica'), B('2 Dashes', 'bitters-orange', 'angostura-orange'),
     B('Spritzer', 'scotch-peated', 'laphroaig-qc', null, 'zum Ausschwenken')],
     steps: 'Gekühlte Coupette mit Laphroaig ausschwenken. Den Rest auf Eis kalt rühren und abseihen.' },
   { id: 'rummanhattan', name: 'Rum Manhattan', src: 'claude', m: 'Gerührt', gl: 'Coupette', ings: [
@@ -533,9 +535,14 @@ function resolve(ing) {
     return { type: 'fresh-missing', key };
   }
   if (!ready()) return { type: 'unknown' };
+  /* Wunschflasche nach Namen (z. B. Adelphi): wenn im Bestand, hat sie Vorrang; sonst gilt alles Weitere als Ersatz */
+  if (ing.want) {
+    const wb = sorted(bottles.filter((b) => isAvail(b) && norm(b.name).includes(norm(ing.want))));
+    if (wb.length) return { type: 'ok', bottle: wb[0] };
+  }
   const pb = ing.p ? bottles.find((b) => b.id === ing.p) : null;
-  const orig = ing.l || (pb && pb.name) || KINDS[ing.k];
-  if (pb && isAvail(pb)) return { type: 'ok', bottle: pb };
+  const orig = ing.wantL || ing.l || (pb && pb.name) || KINDS[ing.k];
+  if (pb && isAvail(pb)) return ing.want ? { type: 'sub', bottle: pb, orig } : { type: 'ok', bottle: pb };
   const same = byKind(ing.k);
   const generic = !ing.p && (!ing.l || norm(ing.l) === norm(KINDS[ing.k]));
   if (same.length) return { type: generic ? 'ok' : 'sub', bottle: same[0], orig };
