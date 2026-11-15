@@ -348,13 +348,14 @@ const STATUS = [
 const FRESH = [
   { k: 'zitrone', l: 'Zitronen' }, { k: 'limette', l: 'Limetten' }, { k: 'orange', l: 'Orangen' },
   { k: 'ei', l: 'Eier' }, { k: 'basilikum', l: 'Basilikum' }, { k: 'birnenkompott', l: 'Birnenkompott' },
-  { k: 'cola', l: 'Cola / Cola-Sirup' }, { k: 'soda', l: 'Soda' }, { k: 'prosecco', l: 'Prosecco' }, { k: 'crushed', l: 'Crushed Ice' }
+  { k: 'cola', l: 'Cola / Cola-Sirup' }, { k: 'prosecco', l: 'Prosecco' }, { k: 'crushed', l: 'Crushed Ice' }
 ];
 const FRESH_OF = {
   'Zitronensaft': 'zitrone', 'Zitronenzeste': 'zitrone', 'Zitrone und Orangenzeste': 'zitrone',
   'Limettensaft': 'limette', 'Orangenzeste': 'orange', 'Orangenscheibe': 'orange',
   'Eiweiß': 'ei', 'Basilikum': 'basilikum', 'Birnenkompott': 'birnenkompott',
-  'Cola bzw. Cola-Sirup': 'cola', 'Soda': 'soda', 'Prosecco': 'prosecco', 'Crushed Ice': 'crushed'
+  /* Soda und Espresso sind immer da und stehen deshalb nicht in dieser Liste */
+  'Cola bzw. Cola-Sirup': 'cola', 'Prosecco': 'prosecco', 'Crushed Ice': 'crushed'
 };
 const freshLabel = (k) => (FRESH.find((f) => f.k === k) || { l: k }).l;
 
