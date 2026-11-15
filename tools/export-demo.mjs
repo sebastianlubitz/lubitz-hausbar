@@ -80,6 +80,10 @@ db.doc('pantry/fresh').onSnapshot((snap) => {
   pantry = snap.exists ? { ...((snap.data() || {}).items || {}) } : {};
   renderAll();
 });
+db.doc('pantry/plan').onSnapshot((snap) => {
+  plan = snap.exists ? { ...((snap.data() || {}).items || {}) } : {};
+  renderAll();
+});
 db.collection('bottles').onSnapshot((snap) => {
   bottles = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
   dbState = 'ready';

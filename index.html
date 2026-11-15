@@ -91,7 +91,21 @@ main.wrap { padding-block: 20px 64px; }
 /* Rezepte */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 18px; align-items: start; }
 .card { background: var(--surface); border: 1px solid var(--line); outline: 1px solid var(--line); outline-offset: -6px; border-radius: var(--radius); padding: 24px 22px 20px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
-.card-head { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; align-items: start; }
+.card-head { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 16px; align-items: start; }
+.pick-btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: transparent; border-radius: 999px; padding: 4px 10px 4px 7px; font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500; color: var(--muted); white-space: nowrap; }
+.pick-btn .box { width: 14px; height: 14px; border: 1.5px solid currentColor; border-radius: 3px; display: grid; place-items: center; }
+.pick-btn .box svg { width: 10px; height: 10px; opacity: 0; }
+.pick-btn[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); }
+.pick-btn[aria-pressed="true"] .box svg { opacity: 1; }
+.pick-btn:disabled { opacity: 0.5; cursor: default; }
+.card.picked { border-color: var(--accent); }
+.mise { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 18px; display: flex; flex-direction: column; gap: 14px; }
+.mise-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 14px 28px; }
+.mise h3 { font-size: 1rem; margin: 0 0 6px; }
+.mise ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; font-size: 0.9rem; }
+.mise li small { color: var(--muted); font-size: 0.78rem; }
+.mise li.miss { color: var(--bad); }
+.mise-foot { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: center; }
 .glass { width: 44px; height: 58px; color: var(--ink); }
 .glass svg { width: 100%; height: 100%; display: block; overflow: visible; }
 .glass .liq { stroke: var(--accent); }
@@ -262,12 +276,14 @@ li.garnish .what { color: var(--muted); }
         <button class="chip-btn" data-src="mine" aria-pressed="false">House Specials</button>
         <button class="chip-btn" data-src="now" aria-pressed="false">Jetzt verfügbar</button>
         <button class="chip-btn" data-src="need" aria-pressed="false">Zutaten benötigt</button>
+        <button class="chip-btn" data-src="plan" aria-pressed="false" id="plan-chip">Zubereiten</button>
       </div>
     </div>
     <div class="toolbar">
       <input class="search" id="r-search" type="search" placeholder="Drink oder Zutat suchen" aria-label="Rezepte durchsuchen">
     </div>
     <p class="summary" id="r-summary"></p>
+    <div id="plan-box" hidden></div>
     <div class="grid" id="r-list"></div>
   </section>
 
@@ -508,6 +524,7 @@ const GA = [
 /* ---------- Zustand ---------- */
 let bottles = [];
 let pantry = {};
+let plan = {}; // Rezept-ID -> Zeitpunkt der Auswahl (Firestore pantry/plan)
 let role = 'unknown'; // unknown | host | guest
 let guestMode = false;
 try { guestMode = localStorage.getItem('hausbar-guest') === '1'; } catch (e) { /* ohne Speicher */ }
@@ -791,22 +808,11 @@ function statusPills(s) {
   return out.join('');
 }
 
-function renderRecipes() {
-  const q = norm(filt.q);
-  const all = RECIPES.map((r) => ({ r, s: recipeState(r) }));
-  const list = all
-    .filter(({ r, s }) => filt.src === 'alle'
-      || (filt.src === 'now' ? ready() && s.ok
-        : filt.src === 'need' ? ready() && !s.ok
-        : r.src === filt.src))
-    .filter(({ r, s }) => !q || norm(r.name).includes(q) || s.res.some(({ i, x }) =>
-      norm(i.l).includes(q) || norm(i.fresh).includes(q) || norm(KINDS[i.k]).includes(q) || (x.bottle && norm(x.bottle.name).includes(q))));
-  const nowCount = all.filter(({ s }) => s.ok).length;
-  $('r-summary').textContent = ready()
-    ? `${list.length} ${list.length === 1 ? 'Rezept' : 'Rezepte'} angezeigt · ${nowCount} von ${RECIPES.length} gehen gerade`
-    : `${list.length} Rezepte · Verfügbarkeit erscheint, sobald der Bestand geladen ist`;
-  $('r-list').innerHTML = list.length ? list.map(({ r, s }) => `
-    <article class="card">
+const CHECK = '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 5.2 L4 7.6 L8.6 2.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>';
+function recipeCardHTML({ r, s }) {
+  const on = !!plan[r.id];
+  return `
+    <article class="card${on ? ' picked' : ''}">
       <div class="card-head">
         <div class="glass" title="${esc(r.gl)}">${glassSVG(r.gl)}</div>
         <div class="card-title">
@@ -814,13 +820,74 @@ function renderRecipes() {
           <h3>${esc(r.name)}</h3>
           <div class="meta">${esc([r.gl, r.m].filter(Boolean).join(' · '))}</div>
         </div>
+        <button class="pick-btn" type="button" data-pick="${r.id}" aria-pressed="${on}" aria-label="${esc(r.name)} zum Zubereiten vormerken" ${canWrite ? '' : 'disabled'}><span class="box">${CHECK}</span>Zubereiten</button>
       </div>
       <div class="rule">${DIAMOND}</div>
       <ul class="ings">${s.res.map(ingHTML).join('')}</ul>
       <p class="steps">${esc(r.steps)}</p>
       ${r.note ? `<p class="rnote">${esc(r.note)}</p>` : ''}
       <div class="status-row">${statusPills(s)}</div>
-    </article>`).join('') : '<div class="notice">Kein Rezept passt zu diesem Filter.</div>';
+    </article>`;
+}
+
+/* Mise en place: alles, was die ausgewählten Drinks zusammen brauchen */
+function miseHTML(list) {
+  const bott = new Map(), fresh = new Map();
+  const add = (m, key, label, drink, miss) => {
+    const e = m.get(key) || { label, drinks: [], miss: false };
+    if (!e.drinks.includes(drink)) e.drinks.push(drink);
+    e.miss = e.miss || miss;
+    m.set(key, e);
+  };
+  for (const { r, s } of list) {
+    for (const { i, x } of s.res) {
+      if (x.type === 'skip') continue;
+      if (i.garnish) add(fresh, 'g:' + i.garnish, i.garnish, r.name, false);
+      else if (i.fresh) add(fresh, 'f:' + i.fresh, i.fresh, r.name, x.type === 'fresh-missing');
+      else if (x.bottle) add(bott, x.bottle.id, x.bottle.name, r.name, false);
+      else add(bott, 'k:' + (x.orig || i.k), x.orig || KINDS[i.k], r.name, true);
+    }
+  }
+  const ul = (m) => `<ul>${[...m.values()].map((e) =>
+    `<li${e.miss ? ' class="miss"' : ''}>${esc(e.label)}${e.miss ? ' · fehlt' : ''}<br><small>${esc(e.drinks.join(', '))}</small></li>`).join('')}</ul>`;
+  return `<div class="mise">
+    <div class="mise-cols">
+      <div><h3>Flaschen</h3>${ul(bott)}</div>
+      <div><h3>Frisch, Eis &amp; Deko</h3>${fresh.size ? ul(fresh) : '<p class="muted" style="margin:0;font-size:.9rem">Nichts Frisches nötig.</p>'}</div>
+    </div>
+    <div class="mise-foot">
+      <span class="muted" style="font-size:.85rem">${list.length} ${list.length === 1 ? 'Drink' : 'Drinks'} ausgewählt</span>
+      <button class="btn ghost" type="button" id="plan-clear" ${canWrite ? '' : 'disabled'}>Auswahl leeren</button>
+    </div>
+  </div>`;
+}
+
+function renderRecipes() {
+  const q = norm(filt.q);
+  const all = RECIPES.map((r) => ({ r, s: recipeState(r) }));
+  const picked = all.filter(({ r }) => plan[r.id]);
+  $('plan-chip').textContent = picked.length ? `Zubereiten (${picked.length})` : 'Zubereiten';
+  const isPlan = filt.src === 'plan';
+  let list = all
+    .filter(({ r, s }) => filt.src === 'alle'
+      || (filt.src === 'now' ? ready() && s.ok
+        : filt.src === 'need' ? ready() && !s.ok
+        : isPlan ? !!plan[r.id]
+        : r.src === filt.src))
+    .filter(({ r, s }) => !q || norm(r.name).includes(q) || s.res.some(({ i, x }) =>
+      norm(i.l).includes(q) || norm(i.fresh).includes(q) || norm(KINDS[i.k]).includes(q) || (x.bottle && norm(x.bottle.name).includes(q))));
+  if (isPlan) list = list.sort((a, b) => plan[a.r.id] - plan[b.r.id]);
+  const box = $('plan-box');
+  box.hidden = !isPlan || !picked.length;
+  box.innerHTML = isPlan && picked.length ? miseHTML(picked) : '';
+  const nowCount = all.filter(({ s }) => s.ok).length;
+  $('r-summary').textContent = isPlan
+    ? (picked.length ? 'Deine Auswahl für jetzt. Alles, was du dafür brauchst, steht oben.' : '')
+    : ready()
+      ? `${list.length} ${list.length === 1 ? 'Rezept' : 'Rezepte'} angezeigt · ${nowCount} von ${RECIPES.length} gehen gerade`
+      : `${list.length} Rezepte · Verfügbarkeit erscheint, sobald der Bestand geladen ist`;
+  $('r-list').innerHTML = list.length ? list.map(recipeCardHTML).join('')
+    : `<div class="notice">${isPlan && !picked.length ? 'Noch nichts ausgewählt. Tipp bei einem Rezept auf „Zubereiten“, dann landet es hier.' : 'Kein Rezept passt zu diesem Filter.'}</div>`;
 }
 
 /* ---------- Karte für Gäste ---------- */
@@ -1189,6 +1256,26 @@ $('fresh-box').addEventListener('click', (e) => {
   renderAll();
   write('pantry', () => db.doc('pantry/fresh').set({ items }));
 });
+/* Zubereiten-Auswahl: liegt in pantry/plan, damit sie auf allen Geräten gleich ist */
+function savePlan() {
+  const items = { ...plan };
+  renderAll();
+  write('plan', () => db.doc('pantry/plan').set({ items }));
+}
+$('r-list').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-pick]');
+  if (!b || !db || !canWrite) return;
+  const id = b.dataset.pick;
+  plan = { ...plan };
+  if (plan[id]) delete plan[id]; else plan[id] = Date.now();
+  savePlan();
+});
+$('plan-box').addEventListener('click', (e) => {
+  if (e.target.id !== 'plan-clear' || !db || !canWrite) return;
+  plan = {};
+  savePlan();
+  toast('Auswahl geleert.');
+});
 $('guest-on').addEventListener('click', () => setGuestMode(true));
 $('guest-exit').addEventListener('click', () => setGuestMode(false));
 window.addEventListener('hashchange', showTab);
@@ -1293,6 +1380,10 @@ if (!configured) {
     pantry = snap.exists ? { ...((snap.data() || {}).items || {}) } : {};
     renderAll();
   }, () => { /* Vorrat bleibt leer */ });
+  db.doc('pantry/plan').onSnapshot((snap) => {
+    plan = snap.exists ? { ...((snap.data() || {}).items || {}) } : {};
+    renderAll();
+  }, () => { /* Auswahl bleibt leer */ });
   db.collection('bottles').onSnapshot((snap) => {
     bottles = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
     if (!snap.metadata.fromCache) clearTimeout(timer);
