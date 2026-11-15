@@ -1,0 +1,1289 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0D0E10">
+<title>Lubitz Hausbar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..600;1,6..96,400&family=Jost:wght@300;400;500;600&display=swap">
+<style>
+/* Layout: Barkarte einer gehobenen New Yorker Cocktailbar. Messing-Haarlinien, Bodoni für Namen, Jost in Kapitälchen für Etiketten; mobil zuerst */
+:root {
+  --bg: #F4F2ED;
+  --surface: #FCFBF8;
+  --ink: #15161A;
+  --muted: #6B675F;
+  --line: #D9D3C6;
+  --chip: #EAE6DC;
+  --accent: #86652B;
+  --accent-soft: #EEE5D2;
+  --ok: #2C6E45;
+  --ok-soft: #DCEBDF;
+  --warn: #8A5D00;
+  --warn-soft: #F2E6C8;
+  --bad: #A3342A;
+  --bad-soft: #F3DCD7;
+  --font-display: "Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
+  --font-body: "Jost", "Futura", "Avenir Next", system-ui, sans-serif;
+  --font-mono: "Jost", "Futura", "Avenir Next", system-ui, sans-serif;
+  --radius: 2px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0D0E10; --surface: #15171A; --ink: #ECE7DC; --muted: #9A958A; --line: #2F2C27; --chip: #1E1F22;
+    --accent: #C9A55C; --accent-soft: #2B2416; --ok: #7DBE93; --ok-soft: #1A2B20; --warn: #DDB25A; --warn-soft: #342A14;
+    --bad: #E7867A; --bad-soft: #36201C; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0D0E10; --surface: #15171A; --ink: #ECE7DC; --muted: #9A958A; --line: #2F2C27; --chip: #1E1F22;
+  --accent: #C9A55C; --accent-soft: #2B2416; --ok: #7DBE93; --ok-soft: #1A2B20; --warn: #DDB25A; --warn-soft: #342A14;
+  --bad: #E7867A; --bad-soft: #36201C; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body { margin: 0; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+.setup { max-width: 620px; margin: 0 auto 32px; }
+.setup code { font-size: 0.85rem; word-break: break-all; color: var(--ink); }
+.foot-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 1080px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.2rem, 7vw, 3.4rem); line-height: 1; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 500; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.45rem; line-height: 1.15; font-weight: 500; }
+.label { font-family: var(--font-body); font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+
+header.top .wrap { padding-block: 40px 22px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+header.top .orn { display: flex; align-items: center; gap: 14px; color: var(--accent); width: min(100%, 420px); }
+header.top .orn::before, header.top .orn::after { content: ""; flex: 1; height: 1px; background: currentColor; opacity: 0.7; }
+header.top .orn svg { width: 14px; height: 14px; flex: none; }
+header.top p { margin: 0; color: var(--muted); font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; }
+
+nav.tabs { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-block: 1px solid var(--line); }
+nav.tabs .wrap { display: flex; justify-content: center; gap: clamp(8px, 4vw, 36px); }
+nav.tabs a { padding: 12px 6px 11px; text-decoration: none; color: var(--muted); font-size: 0.74rem; letter-spacing: 0.24em; text-transform: uppercase; font-weight: 500; border-bottom: 1px solid transparent; margin-bottom: -1px; }
+nav.tabs a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--accent); }
+nav.tabs a:hover { color: var(--ink); }
+
+main.wrap { padding-block: 20px 64px; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 16px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip-btn { border: 1px solid var(--line); background: transparent; border-radius: 999px; padding: 5px 13px; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500; }
+.chip-btn[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.search { flex: 1 1 200px; min-width: 0; border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 7px 11px; }
+.toggle { display: inline-flex; align-items: center; gap: 7px; font-size: 0.88rem; color: var(--muted); }
+.toggle input { accent-color: var(--accent); width: 16px; height: 16px; }
+.summary { font-size: 0.88rem; color: var(--muted); margin: 0 0 14px; }
+
+.notice { border: 1px dashed var(--line); border-radius: var(--radius); padding: 14px 16px; color: var(--muted); margin-bottom: 16px; background: var(--surface); }
+
+/* Rezepte */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 18px; align-items: start; }
+.card { background: var(--surface); border: 1px solid var(--line); outline: 1px solid var(--line); outline-offset: -6px; border-radius: var(--radius); padding: 24px 22px 20px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.card-head { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; align-items: start; }
+.glass { width: 44px; height: 58px; color: var(--ink); }
+.glass svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.glass .liq { stroke: var(--accent); }
+.card-title { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.desc { margin: 0; font-family: var(--font-display); font-style: italic; font-size: 1.02rem; line-height: 1.45; color: var(--muted); }
+.prov { margin: -4px 0 0; font-size: 0.8rem; line-height: 1.5; color: var(--accent); font-weight: 400; }
+.rule { display: flex; align-items: center; gap: 10px; color: var(--accent); }
+.rule::before, .rule::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.rule svg { width: 9px; height: 9px; flex: none; }
+.tag { font-size: 0.64rem; letter-spacing: 0.2em; text-transform: uppercase; white-space: nowrap; color: var(--accent); font-weight: 500; }
+.tag.mine { color: var(--accent); }
+.tag.claude, .tag.vorschlag { color: var(--muted); }
+.tag.einkauf { color: var(--warn); }
+.meta { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+ul.ings { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+ul.ings li { display: grid; grid-template-columns: 5.4rem 1fr; gap: 12px; align-items: baseline; font-size: 0.93rem; }
+ul.ings .amt { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.04em; color: var(--accent); font-variant-numeric: tabular-nums lining-nums; text-align: right; }
+ul.ings .what { min-width: 0; }
+.hint { display: block; font-size: 0.78rem; }
+.hint.sub { color: var(--accent); }
+.hint.miss { color: var(--bad); }
+.hint.note { color: var(--muted); }
+li.garnish .what { color: var(--muted); }
+.fresh-mark { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; margin-left: 4px; }
+.steps { margin: 0; font-size: 0.88rem; color: var(--ink); font-weight: 300; }
+.rnote { margin: 0; font-size: 0.82rem; color: var(--muted); font-style: italic; }
+.status-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.pill { font-size: 0.78rem; padding: 2px 9px; border-radius: 999px; font-weight: 500; }
+.pill.ok { background: var(--ok-soft); color: var(--ok); }
+.pill.sub { background: var(--accent-soft); color: var(--accent); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+.pill.warn { background: var(--warn-soft); color: var(--warn); }
+.pill.neutral { background: var(--chip); color: var(--muted); }
+
+/* Karte für Gäste */
+.karte-host { justify-content: center; }
+.menu { display: flex; flex-direction: column; gap: 56px; padding-top: 8px; }
+.m-head { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 30px; font-family: var(--font-display); font-size: 0.9rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--muted); font-weight: 400; text-align: center; }
+.m-head::before, .m-head::after { content: ""; align-self: stretch; height: 0; border-top: 1px solid var(--line); }
+.m-items { display: flex; flex-direction: column; gap: 48px; max-width: 620px; margin: 0 auto; }
+.m-card { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; min-width: 0; }
+.m-card + .m-card { padding-top: 48px; border-top: 1px dotted var(--line); }
+.m-art { height: 112px; color: var(--ink); margin-bottom: 8px; }
+.m-art svg { height: 100%; width: auto; max-width: 100%; display: block; overflow: visible; margin: 0 auto; }
+.m-art .tint { fill: var(--accent); fill-opacity: 0.22; }
+.m-no { font-family: var(--font-display); font-size: 0.78rem; color: var(--muted); }
+.m-name { font-size: 1.55rem; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; line-height: 1.1; }
+.m-desc { margin: 0; font-family: var(--font-display); font-style: italic; font-size: 0.95rem; line-height: 1.5; color: var(--muted); }
+.m-ings { margin: 0; font-size: 0.9rem; line-height: 1.5; letter-spacing: 0.02em; }
+.m-foot { padding-top: 14px; display: flex; flex-direction: column; align-items: center; gap: 12px; width: min(100%, 300px); }
+.m-glass { width: 30px; height: 40px; color: var(--ink); }
+.m-glass svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.m-glass .liq { stroke: var(--accent); }
+.m-facts { width: 100%; border-collapse: collapse; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; }
+.m-facts th, .m-facts td { text-align: left; padding: 7px 8px; border-top: 1px solid var(--line); font-weight: 400; vertical-align: top; }
+.m-facts tr:first-child th, .m-facts tr:first-child td { border-top: 0; }
+.m-facts th { color: var(--muted); width: 50%; border-right: 1px solid var(--line); text-align: right; padding-right: 12px; }
+.m-facts td { color: var(--ink); padding-left: 12px; }
+.m-note { margin: 0; color: var(--muted); font-family: var(--font-display); font-style: italic; text-align: center; }
+.menu-foot { display: flex; justify-content: center; margin-top: 48px; }
+.fresh-sec { margin-bottom: 28px; }
+.fresh-sec .chip-btn:disabled { opacity: 0.5; cursor: default; }
+
+/* Bestand */
+.cat { margin-bottom: 22px; }
+.cat h2 { font-size: 1.1rem; margin-bottom: 8px; display: flex; align-items: baseline; gap: 8px; }
+.cat h2 .count { font-family: var(--font-body); font-size: 0.8rem; color: var(--muted); }
+.rows { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.row { padding: 10px 14px; border-top: 1px solid var(--line); }
+.row:first-child { border-top: 0; }
+.row-main { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.bottle { width: 12px; height: 30px; border: 1.5px solid var(--muted); border-radius: 3px 3px 4px 4px; position: relative; flex: none; overflow: hidden; }
+.bottle::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: var(--lvl); background: var(--accent); }
+.bottle.empty { border-color: var(--bad); border-style: dashed; }
+.b-name { flex: 1 1 220px; min-width: 0; }
+.b-name strong { font-weight: 500; }
+.b-name .sub { display: block; font-size: 0.8rem; color: var(--muted); }
+.row.is-empty .b-name strong { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--bad); }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; flex: none; }
+.seg button { border: 0; background: transparent; padding: 4px 9px; font-size: 0.8rem; color: var(--muted); border-left: 1px solid var(--line); }
+.seg button:first-child { border-left: 0; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.seg button[aria-pressed="true"][data-v="leer"] { background: var(--bad); color: var(--surface); }
+.seg button[aria-pressed="true"][data-v="fastleer"] { background: var(--warn); color: var(--surface); }
+.seg button:disabled { cursor: default; }
+.acts { display: flex; gap: 4px; flex: none; }
+.link-btn { border: 0; background: transparent; color: var(--accent); font-size: 0.82rem; padding: 4px 6px; border-radius: 6px; }
+.link-btn:hover { background: var(--accent-soft); }
+.link-btn.danger { color: var(--bad); }
+.link-btn.danger:hover { background: var(--bad-soft); }
+.edit { margin-top: 10px; padding: 12px; border-radius: 8px; background: var(--bg); display: flex; flex-wrap: wrap; gap: 8px; align-items: end; }
+.edit label { display: flex; flex-direction: column; gap: 3px; font-size: 0.78rem; color: var(--muted); flex: 1 1 180px; min-width: 0; }
+.edit input, .edit select { border: 1px solid var(--line); background: var(--surface); border-radius: 7px; padding: 6px 9px; font-size: 0.9rem; color: var(--ink); width: 100%; }
+.edit p { margin: 0; flex: 1 1 100%; font-size: 0.88rem; }
+.btn { border: 1px solid var(--ink); background: var(--ink); color: var(--bg); border-radius: 7px; padding: 6px 13px; font-size: 0.88rem; font-weight: 500; }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn.danger { background: var(--bad); border-color: var(--bad); color: var(--surface); }
+.btn:disabled { opacity: 0.5; cursor: default; }
+.add-panel { margin-bottom: 20px; }
+
+/* Einkauf */
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 28px; align-items: start; }
+@media (max-width: 820px) { .two { grid-template-columns: minmax(0, 1fr); } }
+.shop { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.shop ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.shop li { display: flex; gap: 10px; align-items: baseline; }
+.shop li .box { width: 14px; height: 14px; border: 1.5px solid var(--muted); border-radius: 3px; flex: none; transform: translateY(2px); }
+.shop li div { min-width: 0; }
+.shop li small { display: block; color: var(--muted); font-size: 0.8rem; }
+.shop textarea { width: 100%; min-height: 140px; border: 1px solid var(--line); border-radius: 7px; background: var(--bg); color: var(--ink); font-family: var(--font-mono); font-size: 0.8rem; padding: 8px; }
+.ga { display: flex; flex-direction: column; }
+.ga-item { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr) auto; gap: 4px 14px; padding: 12px 0; border-top: 1px solid var(--line); align-items: baseline; }
+.ga-item:first-child { border-top: 0; }
+.ga-item .kind { font-size: 0.76rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.ga-item .pick { font-weight: 500; }
+.ga-item .det { font-size: 0.83rem; color: var(--muted); }
+.ga-item .det b { font-weight: 500; color: var(--ink); }
+.unverified { font-size: 0.72rem; color: var(--warn); border: 1px solid var(--warn); border-radius: 4px; padding: 0 4px; margin-left: 4px; white-space: nowrap; }
+@media (max-width: 560px) {
+  .ga-item { grid-template-columns: minmax(0, 1fr) auto; }
+  .ga-item .kind { grid-column: 1 / -1; }
+}
+.section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.lead { color: var(--muted); font-size: 0.9rem; margin: 4px 0 14px; max-width: 62ch; }
+
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 9px 16px; border-radius: 8px; font-size: 0.88rem; z-index: 20; max-width: calc(100% - 32px); box-shadow: 0 6px 24px rgba(0,0,0,0.18); }
+@media (prefers-reduced-motion: no-preference) { .toast { transition: opacity 0.2s; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <span class="label">Cocktails &amp; Spirituosen</span>
+    <h1>Lubitz Hausbar</h1>
+    <div class="orn" aria-hidden="true"><svg viewBox="0 0 14 14"><path d="M7 0 L14 7 L7 14 L0 7 Z" fill="currentColor"/></svg></div>
+    <p id="sub">Bestand wird geladen …</p>
+  </div>
+</header>
+<nav class="tabs" aria-label="Bereiche" hidden>
+  <div class="wrap">
+    <a href="#karte" data-tab="karte">Karte</a>
+    <a href="#rezepte" data-tab="rezepte">Rezepte</a>
+    <a href="#bestand" data-tab="bestand">Bestand</a>
+    <a href="#einkauf" data-tab="einkauf">Einkauf</a>
+  </div>
+</nav>
+
+<main class="wrap">
+  <section id="v-karte">
+    <div class="toolbar host-only karte-host" hidden>
+      <button class="btn ghost" type="button" id="guest-on">Gastmodus</button>
+      <span class="muted" style="font-size:.85rem">Zeigt auf diesem Gerät nur noch die Karte.</span>
+    </div>
+    <div class="notice setup" id="setup" hidden></div>
+    <div class="menu" id="menu"></div>
+    <div class="menu-foot foot-actions">
+      <button class="link-btn" type="button" id="guest-exit" hidden>Gastmodus beenden</button>
+      <button class="link-btn" type="button" id="login" hidden>Anmelden</button>
+      <button class="link-btn" type="button" id="logout" hidden>Abmelden</button>
+    </div>
+  </section>
+
+  <section id="v-rezepte" hidden>
+    <div class="toolbar">
+      <div class="chips" id="src-chips">
+        <button class="chip-btn" data-src="alle" aria-pressed="true">Alle Drinks</button>
+        <button class="chip-btn" data-src="mine" aria-pressed="false">House Specials</button>
+        <button class="chip-btn" data-src="now" aria-pressed="false">Jetzt verfügbar</button>
+      </div>
+    </div>
+    <div class="toolbar">
+      <input class="search" id="r-search" type="search" placeholder="Drink oder Zutat suchen" aria-label="Rezepte durchsuchen">
+    </div>
+    <p class="summary" id="r-summary"></p>
+    <div class="grid" id="r-list"></div>
+  </section>
+
+  <section id="v-bestand" hidden>
+    <div class="fresh-sec">
+      <div class="section-head"><h2>Frisch &amp; Vorrat</h2></div>
+      <p class="lead">Tipp an, was gerade im Haus ist. Die Karte zeigt nur Drinks, für die alles da ist. Zesten und Deko fallen einfach weg, wenn das Obst fehlt.</p>
+      <div class="chips" id="fresh-box"></div>
+    </div>
+    <div class="section-head"><h2>Flaschen</h2></div>
+    <div class="toolbar">
+      <input class="search" id="b-search" type="search" placeholder="Flasche suchen" aria-label="Bestand durchsuchen">
+      <div class="chips">
+        <button class="chip-btn" id="b-low" aria-pressed="false">Nur fast leer &amp; leer</button>
+        <button class="chip-btn" id="b-add-toggle" aria-pressed="false">+ Flasche hinzufügen</button>
+      </div>
+    </div>
+    <form class="edit add-panel" id="add-form" hidden>
+      <label>Name<input id="add-name" list="ga-picks" placeholder="z. B. Carpano Antica Formula" autocomplete="off"></label>
+      <label>Bereich<select id="add-cat"></select></label>
+      <label>Art<select id="add-kind"></select></label>
+      <button class="btn" type="submit">Hinzufügen</button>
+    </form>
+    <p class="summary" id="b-summary"></p>
+    <div id="b-list"></div>
+  </section>
+
+  <section id="v-einkauf" hidden>
+    <div class="two">
+      <div>
+        <div class="section-head"><h2>Einkaufsliste</h2></div>
+        <p class="lead">Leere und fast leere Flaschen plus das, was in der Grundausstattung fehlt.</p>
+        <div class="shop" id="shop"></div>
+      </div>
+      <div>
+        <div class="section-head"><h2>Grundausstattung</h2><span class="muted" style="font-size:.85rem">Empfehlung eines Bekannten</span></div>
+        <p class="lead">Abgleich mit deinem Bestand. „Fehlt für“ nennt Rezepte, die ohne die Flasche nicht gehen, „Ersatz in“ die, die gerade mit Ersatz laufen.</p>
+        <div class="ga" id="ga"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<datalist id="ga-picks"></datalist>
+<div id="toast" class="toast" hidden></div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getFirestore, doc, collection, onSnapshot, setDoc, updateDoc, deleteDoc, addDoc, writeBatch } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { firebaseConfig, OWNER_UID } from './config.js';
+import { SEED_BOTTLES, SEED_PANTRY } from './seed.js';
+
+const CATS = ['Rum', 'Scotch Whisky', 'Irish, Rye & Co.', 'Weitere Spirituosen', 'Liköre', 'Wermut & Aperitif', 'Bitters', 'Sirup'];
+const KINDS = {
+  'rum-light': 'Heller Rum', 'rum-dark': 'Gereifter Rum', 'rum-spiced': 'Spiced Rum',
+  'scotch': 'Scotch', 'scotch-peated': 'Scotch, rauchig', 'irish': 'Irish Whiskey', 'rye': 'Rye Whiskey', 'bourbon': 'Bourbon', 'whisky-other': 'Sonstiger Whisky',
+  'gin': 'Gin', 'vodka': 'Vodka', 'cognac': 'Cognac / Brandy', 'tequila': 'Tequila', 'absinthe': 'Absinth',
+  'vanilla-liqueur': 'Vanillelikör', 'coffee-liqueur': 'Kaffeelikör', 'cream-liqueur': 'Sahnelikör', 'amaretto': 'Amaretto', 'triple-sec': 'Triple Sec / Curaçao', 'other-liqueur': 'Sonstiger Likör',
+  'sweet-vermouth': 'Roter Wermut', 'dry-vermouth': 'Trockener Wermut', 'campari': 'Campari', 'aperol': 'Aperol',
+  'bitters-angostura': 'Aromatic Bitters', 'bitters-orange': 'Orange Bitters', 'bitters-peychauds': "Peychaud's", 'bitters-peach': 'Peach Bitters', 'bitters-other': 'Sonstige Bitters',
+  'sugar-syrup': 'Zuckersirup', 'fruit-syrup': 'Fruchtsirup', 'other': 'Sonstiges'
+};
+/* Ersatz-Reihenfolge, wenn keine Flasche derselben Art da ist */
+const SUBS = {
+  'bourbon': ['rye'], 'rye': ['bourbon'], 'rum-dark': ['rum-light', 'rum-spiced'], 'rum-light': ['rum-dark'], 'rum-spiced': ['rum-dark'],
+  'scotch': ['scotch-peated', 'irish'], 'scotch-peated': ['scotch'], 'irish': ['scotch', 'rye'], 'whisky-other': ['scotch'],
+  'cognac': ['rum-dark'], 'gin': ['vodka'], 'vodka': ['gin'], 'tequila': ['rum-light'],
+  'vanilla-liqueur': ['sugar-syrup'], 'campari': ['aperol'], 'aperol': ['campari'],
+  'bitters-orange': ['bitters-angostura'], 'bitters-peychauds': ['bitters-angostura'], 'bitters-peach': ['bitters-orange', 'bitters-angostura'], 'bitters-angostura': ['bitters-orange']
+};
+const STATUS = [
+  { v: 'voll', l: 'Voll', lvl: 100 }, { v: 'offen', l: 'Offen', lvl: 60 },
+  { v: 'fastleer', l: 'Fast leer', lvl: 18 }, { v: 'leer', l: 'Leer', lvl: 0 }
+];
+
+/* Frische Zutaten & Vorrat: was davon im Haus ist, steht in pantry/fresh */
+const FRESH = [
+  { k: 'zitrone', l: 'Zitronen' }, { k: 'limette', l: 'Limetten' }, { k: 'orange', l: 'Orangen' },
+  { k: 'ei', l: 'Eier' }, { k: 'basilikum', l: 'Basilikum' }, { k: 'birnenkompott', l: 'Birnenkompott' },
+  { k: 'cola', l: 'Cola / Cola-Sirup' }, { k: 'soda', l: 'Soda' }, { k: 'prosecco', l: 'Prosecco' }, { k: 'crushed', l: 'Crushed Ice' }
+];
+const FRESH_OF = {
+  'Zitronensaft': 'zitrone', 'Zitronenzeste': 'zitrone', 'Zitrone und Orangenzeste': 'zitrone',
+  'Limettensaft': 'limette', 'Orangenzeste': 'orange', 'Orangenscheibe': 'orange',
+  'Eiweiß': 'ei', 'Basilikum': 'basilikum', 'Birnenkompott': 'birnenkompott',
+  'Cola bzw. Cola-Sirup': 'cola', 'Soda': 'soda', 'Prosecco': 'prosecco', 'Crushed Ice': 'crushed'
+};
+const freshLabel = (k) => (FRESH.find((f) => f.k === k) || { l: k }).l;
+
+const B = (a, k, p, l, n) => ({ a, k, p: p || null, l: l || null, n: n || null });
+const F = (a, t, n, opt) => ({ a, fresh: t, n: n || null, opt: !!opt });
+const G = (t, a) => ({ a: a || '', garnish: t });
+
+const RECIPES = [
+  /* Meine Rezepte */
+  { id: 'sazerac', name: 'Sazerac', src: 'mine', m: 'Gerührt', gl: 'Tumbler', ings: [
+    B('3 cl', 'cognac', 'courvoisier'), B('3 cl', 'rye', 'rittenhouse'), B('0,5 cl', 'sugar-syrup', 'monin-zucker'),
+    B('3 Dashes', 'bitters-angostura', 'angostura'), B('3 Dashes', 'bitters-peychauds', 'peychauds'),
+    B('Spritzer', 'absinthe', 'absinth', null, 'zum Benetzen des Glases'), G('Orangenzeste')],
+    steps: 'Glas mit Absinth ausschwenken und mit frischem Eis füllen. Den Rest im Rührglas auf Eis kalt rühren, auf das Eis abseihen, Zeste darüber ausdrücken.' },
+  { id: 'manhattan', name: 'Manhattan', src: 'mine', m: 'Gerührt', gl: 'Coupette', ings: [
+    B('6 cl', 'rye', 'rittenhouse'), B('3 cl', 'sweet-vermouth', 'carpano-antica'), B('2 Dashes', 'bitters-angostura', 'angostura'),
+    B('0,25 cl', 'triple-sec', null, 'Pierre Ferrand Dry Curaçao')],
+    steps: 'Auf Eis kalt rühren, in eine gekühlte Coupette abseihen.' },
+  { id: 'oldfashioned', name: 'Old Fashioned', src: 'mine', m: 'Gerührt', gl: 'Tumbler', ings: [
+    B('5 cl', 'bourbon', null, 'Bourbon'), B('1 Dash', 'bitters-angostura', 'angostura'), B('1 Dash', 'sugar-syrup', 'monin-zucker'), G('etwas Eis fürs Schmelzwasser')],
+    steps: 'Im Tumbler auf Eis rühren, bis es leicht verdünnt ist.' },
+  { id: 'liit', name: 'Long Island Iced Tea (bottled)', src: 'mine', m: 'Vorbereitet', gl: 'Flasche / Longdrinkglas', ings: [
+    B('2 cl', 'vodka', 'our-vodka'), B('2 cl', 'gin', 'tanqueray'), B('2 cl', 'rum-light', 'havana-3'), B('1 cl', 'rum-spiced', 'oakheart'),
+    B('1 cl', 'tequila', null, 'Tequila', 'laut Rezept: 1 cl mehr Havana Club 3'), B('1 cl', 'triple-sec', 'triple-sec'),
+    F('nach Geschmack', 'Limettensaft'), F('auffüllen', 'Cola bzw. Cola-Sirup'), G('Zitrone und Orangenzeste')],
+    note: 'Mengen für Limettensaft und Cola noch offen.',
+    steps: 'Cola-Sirup: 1 l Cola auf 250 ml einkochen, über Nacht mit Limettenzesten ziehen lassen. Spirituosen mischen, mit Limettensaft und Cola bzw. Cola-Sirup auffüllen.' },
+  { id: 'basilsmash', name: 'Basil Smash', src: 'mine', m: 'Geschüttelt', gl: 'Tumbler', ings: [
+    B('6 cl', 'gin', 'tanqueray'), F('½ Zitrone', 'Zitronensaft'), F('1 Handvoll', 'Basilikum'), B('ca. 2 cl', 'sugar-syrup', 'monin-zucker')],
+    steps: 'Basilikum mit Zitronensaft andrücken, alles auf Eis shaken, doppelt abseihen.' },
+  { id: 'ginbirne', name: 'Gin Birne', src: 'mine', m: 'Dry Shake, dann auf Eis', gl: 'Coupette', ings: [
+    B('6 cl', 'gin', 'tanqueray'), F('1,5 cl', 'Zitronensaft'), B('1 cl', 'vanilla-liqueur', 'zuidam-vanilla'), F('1', 'Eiweiß'), F('3 EL', 'Birnenkompott')],
+    steps: 'Erst ohne Eis shaken, dann mit Eis noch mal kräftig, doppelt abseihen.' },
+
+  /* Vorschläge */
+  { id: 'negroni', name: 'Negroni', src: 'vorschlag', m: 'Gerührt', gl: 'Tumbler', ings: [
+    B('3 cl', 'gin', 'tanqueray'), B('3 cl', 'campari', 'campari'), B('3 cl', 'sweet-vermouth', 'carpano-antica'), G('Orangenzeste')],
+    steps: 'Auf Eis rühren, im Tumbler auf frisches Eis abseihen, Orangenzeste.' },
+  { id: 'boulevardier', name: 'Boulevardier', src: 'vorschlag', m: 'Gerührt', gl: 'Tumbler', ings: [
+    B('4,5 cl', 'rye', 'bulleit-rye'), B('3 cl', 'campari', 'campari'), B('3 cl', 'sweet-vermouth', 'carpano-antica'), G('Orangenzeste')],
+    steps: 'Wie Negroni: auf Eis rühren, im Tumbler auf frisches Eis, Orangenzeste.' },
+  { id: 'robroy', name: 'Rob Roy', src: 'vorschlag', m: 'Gerührt', gl: 'Coupette', ings: [
+    B('5 cl', 'scotch', 'glenfarclas-12'), B('2,5 cl', 'sweet-vermouth', 'martini-rosso'), B('2 Dashes', 'bitters-angostura', 'angostura')],
+    steps: 'Kalt rühren, in die Coupette abseihen.' },
+  { id: 'saratoga', name: 'Saratoga', src: 'vorschlag', m: 'Gerührt', gl: 'Coupette', ings: [
+    B('3 cl', 'rye', 'rittenhouse'), B('3 cl', 'cognac', 'courvoisier'), B('3 cl', 'sweet-vermouth', 'martini-rosso'), B('2 Dashes', 'bitters-angostura', 'angostura')],
+    steps: 'Kalt rühren, in die Coupette abseihen.' },
+  { id: 'martinez', name: 'Martinez', src: 'vorschlag', m: 'Gerührt', gl: 'Coupette', ings: [
+    B('5 cl', 'gin', 'tanqueray'), B('3 cl', 'sweet-vermouth', 'martini-rosso'), B('0,5 cl', 'triple-sec', 'triple-sec'), B('1 Dash', 'bitters-orange', 'angostura-orange'), G('Orangenzeste')],
+    steps: 'Kalt rühren, in die Coupette abseihen, Orangenzeste darüber ausdrücken.' },
+  { id: 'godfather', name: 'Godfather', src: 'vorschlag', m: 'Gerührt', gl: 'Tumbler', ings: [
+    B('4,5 cl', 'scotch', 'dalwhinnie-15', null, 'oder Glenfarclas 12'), B('1,5 cl', 'amaretto', 'amaretto')],
+    steps: 'Im Tumbler auf Eis rühren.' },
+  { id: 'blackrussian', name: 'Black Russian', src: 'vorschlag', m: 'Gerührt', gl: 'Tumbler', ings: [
+    B('5 cl', 'vodka', 'our-vodka'), B('2 cl', 'coffee-liqueur', 'kahlua')],
+    steps: 'Im Tumbler auf Eis rühren.' },
+  { id: 'mudslide', name: 'Mudslide', src: 'vorschlag', m: 'Geschüttelt', gl: 'Tumbler', ings: [
+    B('3 cl', 'vodka', 'our-vodka'), B('3 cl', 'coffee-liqueur', 'kahlua'), B('3 cl', 'cream-liqueur', 'baileys')],
+    steps: 'Auf Eis shaken, auf frisches Eis abseihen.' },
+  { id: 'espressomartini', name: 'Espresso Martini', src: 'mine', m: 'Kräftig geschüttelt', gl: 'Coupette', ings: [
+    B('5 cl', 'vodka', 'our-vodka'), F('3 cl', 'Espresso, frisch gebrüht'), B('2 cl', 'coffee-liqueur', 'kahlua'), B('1 cl', 'sugar-syrup', 'monin-zucker'), G('3 Kaffeebohnen')],
+    steps: 'Espresso frisch ziehen. Alles auf viel Eis sehr kräftig shaken, damit sich Schaum bildet, doppelt in die gekühlte Coupette abseihen, mit drei Kaffeebohnen garnieren.' },
+  { id: 'vanillarum', name: 'Vanille-Rum Old Fashioned', src: 'vorschlag', m: 'Gerührt', gl: 'Tumbler', ings: [
+    B('5 cl', 'rum-dark', 'cuate-13', null, 'oder Zacapa 23'), B('0,5–1 cl', 'vanilla-liqueur', 'zuidam-vanilla'), B('2 Dashes', 'bitters-angostura', 'angostura'), B('1 Dash', 'bitters-orange', 'angostura-orange'), G('Orangenzeste')],
+    steps: 'Im Tumbler auf Eis rühren, Orangenzeste.' },
+  { id: 'kafferye', name: 'Kaffee Rye Old Fashioned', src: 'vorschlag', m: 'Gerührt', gl: 'Tumbler', ings: [
+    B('5 cl', 'rye', 'bulleit-rye'), B('1 cl', 'coffee-liqueur', 'nordic-kaffee'), B('2 Dashes', 'bitters-angostura', 'angostura'), G('Orangenzeste')],
+    steps: 'Im Tumbler auf Eis rühren, Orangenzeste.' },
+  { id: 'whiskeysour', name: 'Whiskey Sour', src: 'vorschlag', m: 'Dry Shake, dann auf Eis', gl: 'Tumbler', ings: [
+    B('5 cl', 'rye', 'rittenhouse'), F('2,5 cl', 'Zitronensaft'), B('2 cl', 'sugar-syrup', 'monin-zucker'), F('1', 'Eiweiß'), B('Spritzer', 'bitters-angostura', 'angostura', null, 'obendrauf')],
+    steps: 'Erst ohne, dann mit Eis shaken, abseihen, Angostura obendrauf.' },
+  { id: 'sidecar', name: 'Sidecar', src: 'vorschlag', m: 'Geschüttelt', gl: 'Coupette', ings: [
+    B('5 cl', 'cognac', 'courvoisier'), B('2 cl', 'triple-sec', 'triple-sec'), F('2 cl', 'Zitronensaft')],
+    steps: 'Auf Eis shaken, in die Coupette abseihen.' },
+  { id: 'daiquiri', name: 'Daiquiri', src: 'vorschlag', m: 'Geschüttelt', gl: 'Coupette', ings: [
+    B('5 cl', 'rum-light', 'havana-3'), F('2,5 cl', 'Limettensaft'), B('1,5 cl', 'sugar-syrup', 'monin-zucker')],
+    steps: 'Auf Eis shaken, in die Coupette abseihen.' },
+
+  /* Von Claude, aus dem Bestand */
+  { id: 'frenchconnection', name: 'French Connection', src: 'claude', m: 'Gerührt', gl: 'Tumbler', ings: [
+    B('4,5 cl', 'cognac', 'courvoisier'), B('1,5 cl', 'amaretto', 'amaretto')],
+    steps: 'Im Tumbler auf Eis rühren.' },
+  { id: 'godmother', name: 'Godmother', src: 'claude', m: 'Gerührt', gl: 'Tumbler', ings: [
+    B('4,5 cl', 'vodka', 'our-vodka'), B('1,5 cl', 'amaretto', 'amaretto')],
+    steps: 'Im Tumbler auf Eis rühren.' },
+  { id: 'smokyrobroy', name: 'Smoky Rob Roy', src: 'claude', m: 'Gerührt', gl: 'Coupette', ings: [
+    B('5 cl', 'scotch', 'glenfarclas-12'), B('2,5 cl', 'sweet-vermouth', 'carpano-antica'), B('2 Dashes', 'bitters-orange', 'angostura-orange'),
+    B('Spritzer', 'scotch-peated', 'laphroaig-qc', null, 'zum Ausschwenken')],
+    steps: 'Gekühlte Coupette mit Laphroaig ausschwenken. Den Rest auf Eis kalt rühren und abseihen.' },
+  { id: 'rummanhattan', name: 'Rum Manhattan', src: 'claude', m: 'Gerührt', gl: 'Coupette', ings: [
+    B('5 cl', 'rum-dark', 'zacapa-23'), B('2,5 cl', 'sweet-vermouth', 'carpano-antica'), B('2 Dashes', 'bitters-angostura', 'angostura'), B('1 Dash', 'bitters-orange', 'angostura-orange'), G('Orangenzeste')],
+    steps: 'Auf Eis kalt rühren, in die gekühlte Coupette abseihen, Zeste darüber ausdrücken.' },
+  { id: 'fancybrandy', name: 'Fancy Brandy Cocktail', src: 'claude', m: 'Gerührt', gl: 'Coupette', ings: [
+    B('5 cl', 'cognac', 'courvoisier'), B('0,5 cl', 'triple-sec', 'triple-sec'), B('0,5 cl', 'sugar-syrup', 'monin-zucker'), B('2 Dashes', 'bitters-angostura', 'angostura'), G('Zitronenzeste')],
+    steps: 'Auf Eis kalt rühren, in die Coupette abseihen, Zitronenzeste darüber ausdrücken.' },
+  { id: 'peachrye', name: 'Peach Rye Old Fashioned', src: 'claude', m: 'Gerührt', gl: 'Tumbler', ings: [
+    B('5 cl', 'rye', 'rittenhouse'), B('0,5 cl', 'sugar-syrup', 'monin-zucker'), B('2 Dashes', 'bitters-peach', 'peach-bitters'), B('1 Dash', 'bitters-angostura', 'angostura'), G('Orangenzeste')],
+    steps: 'Im Tumbler auf Eis rühren, Orangenzeste.' },
+  { id: 'redbreastof', name: 'Redbreast Old Fashioned', src: 'claude', m: 'Gerührt', gl: 'Tumbler', ings: [
+    B('5 cl', 'irish', 'redbreast-12'), B('0,5 cl', 'sugar-syrup', 'monin-zucker'), B('1 Dash', 'bitters-angostura', 'angostura'), B('1 Dash', 'bitters-orange', 'angostura-orange'), G('Orangenzeste')],
+    steps: 'Im Tumbler auf Eis rühren, Orangenzeste.' },
+  { id: 'frappe', name: 'Absinthe Frappé', src: 'claude', m: 'Kurz geschüttelt', gl: 'Tumbler mit Crushed Ice', ings: [
+    B('3 cl', 'absinthe', 'absinth'), B('1,5 cl', 'sugar-syrup', 'monin-zucker'), G('kaltes Wasser', '6 cl'), F('', 'Crushed Ice')],
+    steps: 'Absinth, Zuckersirup und Wasser kurz auf Eis shaken, auf Crushed Ice abseihen.' },
+  { id: 'b52', name: 'B-52', src: 'claude', m: 'Geschichtet', gl: 'Shotglas', ings: [
+    B('2 cl', 'coffee-liqueur', 'kahlua'), B('2 cl', 'cream-liqueur', 'baileys'), B('2 cl', 'triple-sec', 'triple-sec')],
+    steps: 'Kahlúa ins Glas, dann Baileys und zuletzt Triple Sec langsam über einen Barlöffelrücken schichten.' },
+  { id: 'americano', name: 'Americano', src: 'claude', m: 'Gebaut', gl: 'Tumbler', ings: [
+    B('3 cl', 'campari', 'campari'), B('3 cl', 'sweet-vermouth', 'martini-rosso'), F('auffüllen', 'Soda'), G('Orangenscheibe')],
+    steps: 'Campari und Wermut im Tumbler auf Eis, mit Soda auffüllen, kurz umrühren.' },
+
+  /* Mit Einkauf */
+  { id: 'drymartini', name: 'Dry Martini', src: 'einkauf', m: 'Gerührt', gl: 'Coupette', ings: [
+    B('6 cl', 'gin', 'tanqueray', null, 'ideal: Gin mit 47 %'), B('1,5 cl', 'dry-vermouth', null, "Burschik's Dry"), B('1 Dash', 'bitters-orange', 'angostura-orange'), G('Zitronenzeste')],
+    steps: 'Auf Eis sehr kalt rühren, in die gekühlte Coupette abseihen, Zeste darüber ausdrücken.' },
+  { id: 'oldpal', name: 'Old Pal', src: 'einkauf', m: 'Gerührt', gl: 'Coupette', ings: [
+    B('3 cl', 'rye', 'rittenhouse'), B('3 cl', 'campari', 'campari'), B('3 cl', 'dry-vermouth', null, "Burschik's Dry")],
+    steps: 'Kalt rühren, in die Coupette abseihen.' },
+  { id: 'margarita', name: 'Margarita', src: 'einkauf', m: 'Geschüttelt', gl: 'Coupette', ings: [
+    Object.assign(B('5 cl', 'tequila', null, 'Tequila Blanco', '100 % Agave'), { subs: [] }), B('2 cl', 'triple-sec', 'triple-sec'), F('2 cl', 'Limettensaft')],
+    steps: 'Auf Eis shaken, in die Coupette abseihen. Salzrand nach Geschmack.' },
+  { id: 'aperolspritz', name: 'Aperol Spritz', src: 'einkauf', m: 'Gebaut', gl: 'Weinglas', ings: [
+    B('6 cl', 'aperol', null, 'Aperol'), F('9 cl', 'Prosecco'), F('Schuss', 'Soda'), G('Orangenscheibe')],
+    steps: 'Weinglas mit Eis füllen, Prosecco, Aperol, Soda, kurz umrühren.' }
+];
+
+const GA = [
+  { t: 'Vodka', pick: 'Sobieski', note: 'Polnischer Roggen-Vodka.', kinds: ['vodka'] },
+  { t: 'Gin', pick: "Broker's 47 %", note: 'Bei Gin immer auf 47 % achten.', kinds: ['gin'], want: '47' },
+  { t: 'Heller Rum', pick: 'Plantation 3 Stars', note: 'Für kubanische Klassiker.', kinds: ['rum-light'] },
+  { t: 'Dunkler Rum', pick: 'Appleton Signature Blend', note: 'Für kräftige Rum-Cocktails.', kinds: ['rum-dark'] },
+  { t: 'Tequila', pick: '„Cella 23“ Blanco', note: 'Immer 100 % Agave.', kinds: ['tequila'], unverified: true },
+  { t: 'Scotch', pick: 'Adelphi Private Stock', note: '', kinds: ['scotch', 'scotch-peated'], unverified: true },
+  { t: 'Bourbon', pick: 'Elijah Craig 12', note: '', kinds: ['bourbon'] },
+  { t: 'Dry Vermouth', pick: "Burschik's Dry", note: 'Für Martinis.', kinds: ['dry-vermouth'] },
+  { t: 'Roter Vermouth', pick: 'Carpano Antica Formula', note: 'Für Negronis.', kinds: ['sweet-vermouth'] },
+  { t: 'Campari', pick: 'Campari', note: 'Ein Muss.', kinds: ['campari'] },
+  { t: 'Aperol', pick: 'Aperol', note: 'Ein Muss.', kinds: ['aperol'] },
+  { t: 'Zuckersirup', pick: 'Zuckersirup', note: '', kinds: ['sugar-syrup'] },
+  { t: 'Fruchtsirup', pick: 'Darbo', note: 'Saisonal.', kinds: ['fruit-syrup'], optional: true },
+  { t: 'Liköre', pick: 'Giffard oder Marie Brizard', note: 'Nur das, was man wirklich braucht.', kinds: null }
+];
+
+/* ---------- Zustand ---------- */
+let bottles = [];
+let pantry = {};
+let role = 'unknown'; // unknown | host | guest
+let guestMode = false;
+try { guestMode = localStorage.getItem('hausbar-guest') === '1'; } catch (e) { /* ohne Speicher */ }
+let dbState = 'loading'; // loading | ready | slow | unavailable | error
+let canWrite = true;
+let db = null;
+let openEdit = null; // {id, mode}
+const drafts = {};
+const filt = { src: 'alle', now: false, q: '' };
+const bfilt = { q: '', low: false };
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const norm = (s) => String(s || '').toLowerCase();
+const isAvail = (b) => b.status !== 'leer';
+const ready = () => dbState === 'ready';
+const sorted = (list) => list.slice().sort((a, b) => (a.order ?? 1e15) - (b.order ?? 1e15) || norm(a.name).localeCompare(norm(b.name)));
+const byKind = (kind) => sorted(bottles.filter((b) => b.kind === kind && isAvail(b)));
+
+function resolve(ing) {
+  if (ing.fresh || ing.garnish) {
+    const key = FRESH_OF[ing.fresh || ing.garnish];
+    if (!ready() || !key || pantry[key] === true) return { type: ing.fresh ? 'fresh' : 'garnish', key };
+    if (ing.garnish || ing.opt) return { type: 'skip', key };
+    return { type: 'fresh-missing', key };
+  }
+  if (!ready()) return { type: 'unknown' };
+  const pb = ing.p ? bottles.find((b) => b.id === ing.p) : null;
+  const orig = ing.l || (pb && pb.name) || KINDS[ing.k];
+  if (pb && isAvail(pb)) return { type: 'ok', bottle: pb };
+  const same = byKind(ing.k);
+  const generic = !ing.p && (!ing.l || norm(ing.l) === norm(KINDS[ing.k]));
+  if (same.length) return { type: generic ? 'ok' : 'sub', bottle: same[0], orig };
+  const subs = ing.subs !== undefined ? ing.subs : (SUBS[ing.k] || []);
+  for (const k of subs) {
+    const s = byKind(k);
+    if (s.length) return { type: 'sub', bottle: s[0], orig };
+  }
+  return { type: 'missing', orig };
+}
+
+function recipeState(r) {
+  const res = r.ings.map((i) => ({ i, x: resolve(i) }));
+  const missing = res.filter((o) => o.x.type === 'missing');
+  const freshMissing = res.filter((o) => o.x.type === 'fresh-missing');
+  return {
+    res, missing, freshMissing,
+    subs: res.filter((o) => o.x.type === 'sub'),
+    ok: missing.length === 0 && freshMissing.length === 0
+  };
+}
+const provOf = (s) => [...new Set(s.res.filter((o) => o.x.type !== 'skip')
+  .map(({ i, x }) => x.bottle ? x.bottle.name : (i.fresh || i.garnish || i.l || KINDS[i.k])))].join(' · ');
+
+/* ---------- Glas-Zeichnungen (Strich, currentColor; Flüssigkeit in Messing) ---------- */
+const SVG_OPEN = '<svg viewBox="0 0 48 64" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+const GLASSES = {
+  coupe: `<path d="M7 12 H41 C41 25 33 31 24 31 C15 31 7 25 7 12 Z"/>
+    <path class="liq" d="M9.5 18 C19 19.4 29 19.4 38.5 18"/>
+    <path d="M24 31 V54"/><path d="M14 57 C18 54.6 30 54.6 34 57 Z"/>
+    <path d="M36 12 C38 8.5 41.5 8 43 10" opacity=".8"/>`,
+  rocks: `<path d="M9 16 L12 56 H36 L39 16"/><path d="M9 16 H39"/>
+    <path d="M12.6 51 H35.4"/>
+    <path class="liq" d="M10.4 30 H37.6"/>
+    <rect x="16" y="33" width="9" height="9" transform="rotate(-12 20.5 37.5)"/>
+    <rect x="24" y="37" width="8" height="8" transform="rotate(9 28 41)"/>`,
+  highball: `<path d="M13 8 L15.5 58 H32.5 L35 8"/><path d="M13 8 H35"/>
+    <path d="M15.3 53 H32.7"/>
+    <path class="liq" d="M13.6 20 H34.4"/>
+    <path d="M29 2 L21 44"/>
+    <circle cx="21" cy="30" r="1" opacity=".7"/><circle cx="27" cy="38" r=".8" opacity=".7"/><circle cx="24" cy="25" r=".8" opacity=".7"/>`,
+  wine: `<path d="M12 6 C10.5 20 14 32 24 34 C34 32 37.5 20 36 6 Z"/>
+    <path class="liq" d="M12.2 17 C20 18.2 28 18.2 35.8 17"/>
+    <path d="M24 34 V55"/><path d="M14 58 C18 55.6 30 55.6 34 58 Z"/>
+    <circle cx="35" cy="9" r="4.5" opacity=".8"/>`,
+  shot: `<path d="M15 28 L17.5 57 H30.5 L33 28 Z"/>
+    <path class="liq" d="M16 39 H32"/><path class="liq" d="M16.6 46 H31.4"/>
+    <path d="M17 52.5 H31"/>`,
+  bottle: `<path d="M20.5 4 H27.5 V15 C27.5 19 34 21 34 27 V59 H14 V27 C14 21 20.5 19 20.5 15 Z"/>
+    <path d="M20.5 8 H27.5"/>
+    <path d="M17 34 H31 V47 H17 Z"/>
+    <path d="M19.5 39 H28.5 M21 42.5 H27" opacity=".8"/>
+    <path class="liq" d="M14 30 H34"/>`
+};
+function glassFor(gl) {
+  const g = norm(gl);
+  if (g.includes('flasche')) return 'bottle';
+  if (g.includes('coupette')) return 'coupe';
+  if (g.includes('longdrink')) return 'highball';
+  if (g.includes('wein')) return 'wine';
+  if (g.includes('shot')) return 'shot';
+  return 'rocks';
+}
+const glassSVG = (gl) => SVG_OPEN + GLASSES[glassFor(gl)] + '</svg>';
+const DIAMOND = '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 0 L10 5 L5 10 L0 5 Z" fill="currentColor"/></svg>';
+
+/* ---------- Karte: Kurzbeschreibungen ---------- */
+const DESC = {
+  sazerac: 'Ein Schleier aus grünem Nebel liegt über dem Glas, darunter streiten Rye und Cognac höflich darum, wer zuerst in New Orleans war. Kühl im Ton, warm im Herzen.',
+  manhattan: 'Wenn am Hudson die Lichter angehen, legt sich roter Wermut wie ein Samtmantel um würzigen Rye. Ein Hauch Orange flüstert vom letzten Zug nach Hause.',
+  oldfashioned: 'Zucker, Bitters, Whiskey und ein Stück Eis, das langsam nachgibt. Älter als das Wort Cocktail und geduldiger als jeder Gast.',
+  liit: 'Fünf Spirituosen trafen sich heimlich in einer Flasche und kamen als Eistee wieder heraus. Die Cola hat dafür eine ganze Nacht mit Limetten geschwiegen.',
+  basilsmash: 'Ein ganzer Kräutergarten wurde für diesen Drink zerdrückt und hat sich nicht beschwert. Gin und Zitrone tragen ihn grün und duftend in den Sommerabend.',
+  ginbirne: 'Im Herbst fällt eine Birne in den Gin und landet weich auf Vanille. Darüber eine Wolke aus Schaum, die so tut, als wäre nichts gewesen.',
+  negroni: 'Drei gleich starke Charaktere, keiner gibt nach: bitter, süß, stark. In Florenz gab man ihnen ein gemeinsames Glas, damit sie sich vertragen.',
+  boulevardier: 'Der Negroni hat sich einen Wollmantel aus Rye übergezogen und flaniert durch das Paris der Zwanziger. Für Abende, an denen der Wind um die Ecke pfeift.',
+  robroy: 'Ein Highlander verirrte sich nach Manhattan und bestellte, was alle tranken, nur mit seinem eigenen Whisky. Sherryfass, roter Wermut, kein Heimweh.',
+  saratoga: 'Rye, Cognac und Wermut gingen gemeinsam zum Pferderennen, und keiner wollte Zweiter werden. Also teilen sie sich den Sieg zu gleichen Teilen.',
+  martinez: 'Bevor der Martini trocken und berühmt wurde, war er rund, rötlich und ein wenig verträumt. Gin, Wermut, ein Funken Orange: der Großvater erzählt.',
+  godfather: 'Zwei Zutaten, eine Ansage. Scotch macht ein Angebot, und Amaretto sorgt dafür, dass man es nicht ablehnen kann.',
+  blackrussian: 'Mitternacht im Tumbler. Der Wodka schweigt, der Kaffee redet, und das Eis hört aufmerksam zu.',
+  espressomartini: 'Ein Espresso kam spät nachts in die Bar und wollte nicht schlafen gehen. Wodka und Kaffeelikör schütteln ihn wach, bis eine samtige Crema obenauf liegt.',
+  mudslide: 'Ein Erdrutsch aus Kaffee, Sahne und Wodka, der so sanft abgeht, dass niemand zu Schaden kommt. Das Dessert, das sich als Drink verkleidet hat.',
+  vanillarum: 'Barbados schickt seinen ältesten Rum, aus Holland reist eine Vanilleschote an. Zusammen erzählen sie langsam, was die Fässer in dreizehn Jahren gehört haben.',
+  kafferye: 'Der Espresso ist getrunken, der Abend noch lange nicht vorbei. Rye nimmt die dunkle Röstung mit in die späten Stunden.',
+  whiskeysour: 'Die Zitrone sagt die Wahrheit, der Zucker macht sie erträglich, und Rye trägt sie mit Würde. Obendrauf eine Schaumkrone mit Sommersprossen aus Angostura.',
+  sidecar: 'Ein Motorrad mit Beiwagen hält vor einem Pariser Hotel, heraus steigen Cognac und Orange. Die Zitrone fährt nur mit, damit es nicht zu süß wird.',
+  daiquiri: 'Drei Zutaten, keine Ausreden. In Havanna mischt man ihn mit geschlossenen Augen, alle anderen müssen üben.',
+  frenchconnection: 'Der Godfather hat einen Cousin in Cognac, der genauso wenig redet. Warm, nussig, mit einem Lächeln, das man nicht ganz deuten kann.',
+  godmother: 'Die Patin spricht leiser als der Pate, aber sie hat das letzte Wort. Klarer Wodka, weiche Mandel, keine Fragen.',
+  smokyrobroy: 'Über einen klassischen Rob Roy weht der Rauch eines Torffeuers von Islay. Man riecht das Meer, bevor man den ersten Schluck nimmt.',
+  rummanhattan: 'Ein Manhattan machte Urlaub in Guatemala und kam nie ganz zurück. Rum aus den Bergen, roter Wermut, Orange im Handgepäck.',
+  fancybrandy: 'Aus der Zeit, als man noch bei Gaslicht rührte und den Hut an der Garderobe abgab. Cognac, ein Tropfen Orange, ein Schuss Bitters, tadellose Manieren.',
+  peachrye: 'Spätsommer: Ein Pfirsich fällt vom Baum und rollt in ein Glas Rye. Der Whiskey nimmt es gelassen und wird ein wenig weicher.',
+  redbreastof: 'Ein Rotkehlchen aus Irland singt im Tumbler von Gewürzen, Malz und einer dünnen Orangenzeste. Rund wie ein Abend im Pub, nur leiser.',
+  frappe: 'Ein grüner Geist steigt aus dem Crushed Ice und erinnert sich an New Orleans, als die Nächte noch länger waren. Kalt, süßlich, ein bisschen verboten.',
+  b52: 'Drei Stockwerke, ein Aufzug: Kaffee im Keller, Sahne im Erdgeschoss, Orange unterm Dach. Ein Schluck, und man ist ganz oben.',
+  americano: 'Campari und Wermut wollten es leicht nehmen und luden Soda dazu ein. Was nach Nachmittag in Mailand schmeckt, wurde später zum Negroni.',
+  drymartini: 'Kalt wie ein Wintermorgen am Central Park und genauso klar. Eine Bar erkennt man daran, wie sie ihn rührt, einen Gast daran, wie er ihn bestellt.',
+  oldpal: 'Ein alter Freund des Boulevardier, der dem Zucker längst abgeschworen hat. Rye, Campari, trockener Wermut und ein Händedruck, der hält.',
+  margarita: 'Tequila, Limette und Orange tanzen im Dreieck, und keiner tritt dem anderen auf die Füße. Ein Salzrand, wenn man das Meer mit einladen will.',
+  aperolspritz: 'Venedig, fünf Uhr nachmittags, die Sonne steht schräg über dem Kanal. Orange und Bitter perlen im Weinglas, als hätte jemand die Stunde abgefüllt.'
+};
+
+/* ---------- Karte: botanische Strichzeichnungen ---------- */
+const ART_OPEN = '<svg viewBox="0 0 120 100" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+const f1 = (n) => +n.toFixed(1);
+function leaf(x1, y1, x2, y2, w, tint = true) {
+  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy), nx = -dy / L * w, ny = dx / L * w;
+  const p = (t, s) => `${f1(x1 + dx * t + nx * s)} ${f1(y1 + dy * t + ny * s)}`;
+  return `<path class="${tint ? 'tint' : ''}" d="M${x1} ${y1} C${p(0.3, 1)} ${p(0.75, 0.8)} ${x2} ${y2} C${p(0.75, -0.8)} ${p(0.3, -1)} ${x1} ${y1} Z"/>` +
+    `<path d="M${x1} ${y1} L${p(0.85, 0)}" opacity=".5"/>`;
+}
+const dots = (pts, r = 0.8) => pts.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="currentColor" stroke="none"/>`).join('');
+const circles = (pts, r, cls = 'tint') => pts.map(([x, y]) => `<circle class="${cls}" cx="${x}" cy="${y}" r="${r}"/>`).join('');
+function spokes(cx, cy, r, n, from = 0, to = 360) {
+  let s = '';
+  for (let k = 0; k < n; k++) {
+    const a = (from + (to - from) * (n === 1 ? 0 : k / (to - from === 360 ? n : n - 1))) * Math.PI / 180;
+    s += `M${cx} ${cy} L${f1(cx + Math.cos(a) * r)} ${f1(cy - Math.sin(a) * r)} `;
+  }
+  return `<path d="${s}" opacity=".7"/>`;
+}
+const ART = {
+  orange: `<circle class="tint" cx="50" cy="56" r="26"/>
+    <path d="M50 30 C50 26 51 23 53 21"/>${leaf(53, 21, 88, 12, 7)}
+    ${dots([[38, 48], [44, 62], [58, 46], [62, 66], [36, 66], [52, 74], [66, 54]])}
+    <path class="tint" d="M76 88 A18 18 0 0 1 112 88 Z"/><path d="M79.5 88 A14.5 14.5 0 0 1 108.5 88"/>${spokes(94, 88, 13, 5, 30, 150)}`,
+  lemon: `<path class="tint" d="M22 60 C24 42 42 32 60 32 C78 32 94 44 96 60 C94 76 78 86 60 86 C42 86 24 76 22 60 Z"/>
+    <path d="M22 60 C19 58.5 16 58.5 13 60 C16 61.5 19 61.5 22 60 M96 60 C99 58.5 102 58.5 105 60 C102 61.5 99 61.5 96 60"/>
+    <path d="M60 32 C59 27 60 23 63 20"/>${leaf(63, 20, 98, 12, 7)}
+    ${dots([[40, 50], [48, 66], [62, 44], [72, 70], [80, 54], [54, 76]])}`,
+  lime: `<circle class="tint" cx="46" cy="58" r="22"/>
+    <path d="M46 36 C45 31 47 27 50 24"/>${leaf(50, 24, 82, 16, 6)}
+    ${dots([[36, 52], [44, 68], [56, 50], [54, 66]])}
+    <circle class="tint" cx="90" cy="72" r="16"/><circle cx="90" cy="72" r="12.5"/>${spokes(90, 72, 12, 8)}`,
+  basil: `<path d="M60 98 L60 22"/>
+    ${leaf(60, 82, 28, 68, 10)}${leaf(60, 82, 92, 68, 10)}${leaf(60, 62, 34, 48, 9)}${leaf(60, 62, 86, 48, 9)}
+    ${leaf(60, 42, 40, 30, 7)}${leaf(60, 42, 80, 30, 7)}${leaf(60, 24, 53, 9, 4.5)}${leaf(60, 24, 67, 9, 4.5)}`,
+  pear: `<path class="tint" d="M60 24 C52 24 50 36 48 46 C46 56 32 62 32 76 C32 90 46 96 60 96 C74 96 88 90 88 76 C88 62 74 56 72 46 C70 36 68 24 60 24 Z"/>
+    <path d="M60 24 C60 18 62 13 66 9"/>${leaf(64, 12, 96, 6, 7)}
+    ${dots([[48, 76], [56, 64], [70, 80], [66, 70], [76, 70], [60, 86]])}`,
+  cherry: `<path d="M72 12 C66 32 52 48 44 60 M72 12 C75 32 79 48 82 62"/>
+    <circle class="tint" cx="42" cy="72" r="13"/><circle class="tint" cx="83" cy="75" r="13"/>
+    <path d="M35 66 C36 63 39 61 42 61 M76 69 C77 66 80 64 83 64" opacity=".7"/>${leaf(72, 12, 106, 16, 7)}`,
+  rye: (() => {
+    let g = '<path d="M42 98 C50 80 54 66 56 60 L72 10"/>';
+    for (let i = 0; i < 6; i++) {
+      const x = 56 + 16 * i / 5, y = 60 - 48 * i / 5;
+      const grain = '<path class="tint" d="M0 0 C-4 -4 -4 -10 0 -13 C4 -10 4 -4 0 0 Z"/><path d="M0 -13 L0 -30" opacity=".7"/>';
+      g += `<g transform="translate(${f1(x - 4)} ${f1(y)}) rotate(-28)">${grain}</g><g transform="translate(${f1(x + 4)} ${f1(y + 3)}) rotate(26)">${grain}</g>`;
+    }
+    return g + leaf(46, 88, 104, 66, 5);
+  })(),
+  heather: `<path d="M60 98 C58 72 56 44 54 12 M57 64 C66 54 74 44 82 28 M56 48 C46 40 40 30 34 18 M58 80 C50 74 44 70 36 66"/>
+    ${circles([[54, 12], [55, 18], [55, 24], [56, 30], [82, 28], [80, 34], [77, 40], [74, 45], [70, 50], [34, 18], [36, 24], [39, 30], [43, 35], [47, 40], [36, 66], [41, 69], [46, 72]], 2.6)}`,
+  grapes: `<path d="M65 31 C64 22 60 16 54 12"/><path d="M60 18 C66 13 72 17 67 22" opacity=".8"/>${leaf(66, 24, 106, 12, 10)}
+    ${circles([[44, 38], [58, 38], [72, 38], [86, 38], [51, 50], [65, 50], [79, 50], [58, 62], [72, 62], [65, 74]], 7)}`,
+  juniper: (() => {
+    let s = '<path d="M28 92 C48 72 70 50 94 18"/><path d="';
+    [[36, 84], [44, 76], [52, 68], [60, 60], [68, 51], [76, 42], [84, 32]].forEach(([x, y]) => { s += `M${x} ${y} l-5 -11 M${x} ${y} l11 4 `; });
+    return s + '" opacity=".85"/>' + circles([[56, 76], [65, 82], [74, 70], [46, 64]], 4.5);
+  })(),
+  almond: `<path class="tint" d="M38 84 C24 72 26 48 44 36 C56 52 54 74 38 84 Z"/><path d="M38 82 C44 70 46 54 44 38" opacity=".5"/>
+    <path class="tint" d="M70 90 C60 74 66 54 86 48 C94 66 88 84 70 90 Z"/><path d="M71 88 C78 76 84 62 86 50" opacity=".5"/>
+    ${dots([[36, 60], [40, 70], [44, 52], [74, 74], [80, 66], [78, 80]])}
+    <g transform="translate(92 22)">${[0, 72, 144, 216, 288].map((a) => `<ellipse class="tint" cx="0" cy="-7" rx="5" ry="7" transform="rotate(${a})"/>`).join('')}${dots([[0, 0], [2, -2], [-2, 1]], 0.9)}</g>
+    <path d="M86 30 C80 34 74 34 66 30"/>`,
+  coffee: `${leaf(64, 30, 108, 14, 9)}<path d="M40 30 C50 30 58 30 64 30"/>
+    ${[[42, 64, -25], [70, 54, 20], [62, 84, 70]].map(([x, y, a]) => `<g transform="translate(${x} ${y}) rotate(${a})"><ellipse class="tint" rx="10" ry="14"/><path d="M0 -12 C-4 -4 4 4 0 12"/></g>`).join('')}`,
+  vanilla: `<path class="tint" d="M18 92 C40 70 70 42 104 22 C106 24 107 26 106 28 C72 48 44 76 24 96 Z"/>
+    <path d="M30 84 C50 66 74 46 98 30" opacity=".45"/>
+    <g transform="translate(40 30)">${[0, 72, 144, 216, 288].map((a) => `<ellipse class="tint" cx="0" cy="-10" rx="4.5" ry="10" transform="rotate(${a})"/>`).join('')}<circle cx="0" cy="0" r="3"/></g>`,
+  wormwood: (() => {
+    let s = '<path d="M60 98 C60 70 62 40 63 12"/><path d="';
+    [82, 68, 54, 40, 26].forEach((y, i) => {
+      const w = 22 - i * 3;
+      [-1, 1].forEach((d) => {
+        const x0 = 60 + i * 0.6;
+        s += `M${x0} ${y} C${x0 + d * w * 0.4} ${y - 2} ${x0 + d * w * 0.7} ${y - 4} ${x0 + d * w} ${y - 8} `;
+        s += `M${f1(x0 + d * w * 0.45)} ${y - 3} l${d * 4} -7 M${f1(x0 + d * w * 0.7)} ${y - 5} l${d * 4} 5 `;
+      });
+    });
+    return s + '"/>' + circles([[63, 10], [67, 15], [59, 15], [64, 20]], 2);
+  })(),
+  peach: `<path class="tint" d="M58 30 C40 28 26 42 26 60 C26 80 42 92 60 92 C78 92 94 80 94 60 C94 42 80 28 62 30 C61 31 59 31 58 30 Z"/>
+    <path d="M60 32 C52 46 52 72 60 90" opacity=".6"/><path d="M60 30 C60 24 62 20 66 16"/>${leaf(65, 17, 100, 8, 8)}`,
+  sugarcane: `<path class="tint" d="M44 98 L50 8 L58 8 L52 98 Z" stroke="none"/><path d="M44 98 L50 8 M52 98 L58 8"/>
+    ${[78, 56, 34, 14].map((y) => { const x = f1(44 + 6 * (98 - y) / 90); return `<path d="M${x} ${y} Q${f1(x + 4)} ${y + 2.5} ${f1(x + 8)} ${y}"/>`; }).join('')}
+    ${leaf(56, 44, 112, 30, 3.5)}${leaf(47, 64, 8, 50, 3.5)}${leaf(57, 24, 96, 6, 3)}`,
+  olive: `<path d="M12 74 C40 62 70 50 110 28"/>
+    ${leaf(26, 68, 14, 50, 3.5)}${leaf(44, 60, 40, 40, 3.5)}${leaf(62, 53, 64, 32, 3.5)}${leaf(80, 45, 86, 26, 3.5)}${leaf(96, 37, 108, 20, 3.5)}${leaf(34, 65, 20, 82, 3.5)}${leaf(88, 41, 100, 54, 3.5)}
+    <path d="M54 57 L52 66 M70 51 L70 60"/>
+    <ellipse class="tint" cx="51" cy="74" rx="6" ry="8" transform="rotate(15 51 74)"/><ellipse class="tint" cx="70" cy="68" rx="6" ry="8"/>`
+};
+const ART_OF = {
+  sazerac: 'wormwood', manhattan: 'cherry', oldfashioned: 'orange', liit: 'lemon', basilsmash: 'basil', ginbirne: 'pear',
+  negroni: 'orange', boulevardier: 'rye', robroy: 'heather', saratoga: 'grapes', martinez: 'juniper', godfather: 'almond',
+  blackrussian: 'coffee', espressomartini: 'coffee', mudslide: 'coffee', vanillarum: 'vanilla', kafferye: 'coffee', whiskeysour: 'lemon', sidecar: 'orange',
+  daiquiri: 'lime', frenchconnection: 'almond', godmother: 'almond', smokyrobroy: 'heather', rummanhattan: 'sugarcane',
+  fancybrandy: 'grapes', peachrye: 'peach', redbreastof: 'rye', frappe: 'wormwood', b52: 'coffee', americano: 'orange',
+  drymartini: 'olive', oldpal: 'rye', margarita: 'lime', aperolspritz: 'orange'
+};
+const artSVG = (id) => ART[ART_OF[id]] ? ART_OPEN + ART[ART_OF[id]] + '</svg>' : '';
+
+/* ---------- Karte: Geschmack und Herkunft ---------- */
+const FACTS = {
+  sazerac: ['Würzig + Anisig', 'New Orleans'], manhattan: ['Würzig + Samtig', 'New York'], oldfashioned: ['Kräftig + Rund', 'USA'],
+  liit: ['Frisch + Spritzig', 'Long Island'], basilsmash: ['Frisch + Grün', 'Hamburg'], ginbirne: ['Fruchtig + Cremig', 'Lubitz Hausbar'],
+  negroni: ['Bitter + Süß', 'Florenz'], boulevardier: ['Bitter + Wärmend', 'Paris'], robroy: ['Malzig + Samtig', 'New York'],
+  saratoga: ['Würzig + Rund', 'USA'], martinez: ['Kräutrig + Weich', 'Kalifornien'], godfather: ['Nussig + Kräftig', 'USA'],
+  blackrussian: ['Dunkel + Glatt', 'Brüssel'], espressomartini: ['Röstig + Samtig', 'London'], mudslide: ['Cremig + Süß', 'Grand Cayman'], vanillarum: ['Vanillig + Warm', 'Lubitz Hausbar'],
+  kafferye: ['Röstig + Würzig', 'Lubitz Hausbar'], whiskeysour: ['Sauer + Samtig', 'USA'], sidecar: ['Fruchtig + Elegant', 'Paris'],
+  daiquiri: ['Sauer + Frisch', 'Kuba'], frenchconnection: ['Nussig + Warm', 'USA'], godmother: ['Nussig + Mild', 'USA'],
+  smokyrobroy: ['Rauchig + Samtig', 'Lubitz Hausbar'], rummanhattan: ['Warm + Würzig', 'Lubitz Hausbar'], fancybrandy: ['Elegant + Würzig', 'New York'],
+  peachrye: ['Fruchtig + Würzig', 'Lubitz Hausbar'], redbreastof: ['Rund + Würzig', 'Lubitz Hausbar'], frappe: ['Anisig + Eiskalt', 'New Orleans'],
+  b52: ['Süß + Cremig', 'Kanada'], americano: ['Bitter + Spritzig', 'Mailand'], drymartini: ['Trocken + Klar', 'New York'],
+  oldpal: ['Trocken + Bitter', 'Paris'], margarita: ['Sauer + Salzig', 'Mexiko'], aperolspritz: ['Bitter + Spritzig', 'Venetien']
+};
+
+/* ---------- Rezepte ---------- */
+const SRC_LABEL = { mine: 'House Special', vorschlag: 'Vorschlag', claude: 'Von Claude', einkauf: 'Mit Einkauf' };
+
+function ingHTML(o) {
+  const { i, x } = o;
+  const skip = x.type === 'skip' ? '<span class="hint note">entfällt, gerade nicht im Haus</span>' : '';
+  if (i.garnish) return `<li class="garnish"><span class="amt">${esc(i.a)}</span><span class="what">${esc(i.garnish)}${skip}</span></li>`;
+  if (i.fresh) return `<li><span class="amt">${esc(i.a)}</span><span class="what">${esc(i.fresh)}<span class="fresh-mark">frisch</span>${x.type === 'fresh-missing' ? '<span class="hint miss">gerade nicht im Haus</span>' : ''}${skip}${i.n ? `<span class="hint note">${esc(i.n)}</span>` : ''}</span></li>`;
+  let name, hint = '';
+  if (x.type === 'ok') name = x.bottle.name;
+  else if (x.type === 'sub') { name = x.bottle.name; hint = `<span class="hint sub">Ersatz statt ${esc(x.orig)}</span>`; }
+  else if (x.type === 'missing') { name = x.orig; hint = `<span class="hint miss">fehlt im Bestand</span>`; }
+  else name = i.l || KINDS[i.k];
+  const note = i.n ? `<span class="hint note">${esc(i.n)}</span>` : '';
+  return `<li><span class="amt">${esc(i.a)}</span><span class="what">${esc(name)}${hint}${note}</span></li>`;
+}
+
+function statusPills(s) {
+  const out = [];
+  if (!ready()) out.push('<span class="pill neutral">Bestand nicht geladen</span>');
+  else if (s.missing.length) out.push(`<span class="pill bad">Fehlt: ${esc(s.missing.map((o) => KINDS[o.i.k]).join(', '))}</span>`);
+  else if (s.freshMissing.length) out.push(`<span class="pill warn">Braucht: ${esc([...new Set(s.freshMissing.map((o) => freshLabel(o.x.key)))].join(', '))}</span>`);
+  else if (s.subs.length) out.push(`<span class="pill sub">Geht mit Ersatz</span>`);
+  else out.push('<span class="pill ok">Geht jetzt</span>');
+  return out.join('');
+}
+
+function renderRecipes() {
+  const q = norm(filt.q);
+  const all = RECIPES.map((r) => ({ r, s: recipeState(r) }));
+  const list = all
+    .filter(({ r, s }) => filt.src === 'alle' || (filt.src === 'now' ? ready() && s.ok : r.src === filt.src))
+    .filter(({ r, s }) => !q || norm(r.name).includes(q) || s.res.some(({ i, x }) =>
+      norm(i.l).includes(q) || norm(i.fresh).includes(q) || norm(KINDS[i.k]).includes(q) || (x.bottle && norm(x.bottle.name).includes(q))));
+  const nowCount = all.filter(({ s }) => s.ok).length;
+  $('r-summary').textContent = ready()
+    ? `${list.length} ${list.length === 1 ? 'Rezept' : 'Rezepte'} angezeigt · ${nowCount} von ${RECIPES.length} gehen gerade`
+    : `${list.length} Rezepte · Verfügbarkeit erscheint, sobald der Bestand geladen ist`;
+  $('r-list').innerHTML = list.length ? list.map(({ r, s }) => `
+    <article class="card">
+      <div class="card-head">
+        <div class="glass" title="${esc(r.gl)}">${glassSVG(r.gl)}</div>
+        <div class="card-title">
+          ${r.src === 'mine' ? '<span class="tag mine">House Special</span>' : ''}
+          <h3>${esc(r.name)}</h3>
+          <div class="meta">${esc([r.gl, r.m].filter(Boolean).join(' · '))}</div>
+        </div>
+      </div>
+      <div class="rule">${DIAMOND}</div>
+      <ul class="ings">${s.res.map(ingHTML).join('')}</ul>
+      <p class="steps">${esc(r.steps)}</p>
+      ${r.note ? `<p class="rnote">${esc(r.note)}</p>` : ''}
+      <div class="status-row">${statusPills(s)}</div>
+    </article>`).join('') : '<div class="notice">Kein Rezept passt zu diesem Filter.</div>';
+}
+
+/* ---------- Karte für Gäste ---------- */
+/* Gruppen nach Grundspirituose: die erste Flasche im Rezept bestimmt die Gruppe */
+const BASES = ['Whisky', 'Gin', 'Rum', 'Cognac', 'Wodka', 'Tequila', 'Likör, Bitter & Absinth'];
+const BASE_OF_KIND = {
+  'rye': 'Whisky', 'bourbon': 'Whisky', 'scotch': 'Whisky', 'scotch-peated': 'Whisky', 'irish': 'Whisky', 'whisky-other': 'Whisky',
+  'gin': 'Gin', 'rum-light': 'Rum', 'rum-dark': 'Rum', 'rum-spiced': 'Rum', 'cognac': 'Cognac', 'vodka': 'Wodka', 'tequila': 'Tequila'
+};
+function baseOf(r) {
+  const first = r.ings.find((i) => i.k);
+  return (first && BASE_OF_KIND[first.k]) || 'Likör, Bitter & Absinth';
+}
+function menuItemHTML(r, s, n) {
+  const f = FACTS[r.id] || ['', ''];
+  const rows = [['Geschmack', f[0]]].filter((x) => x[1]);
+  return `<article class="m-card">
+    <div class="m-art">${artSVG(r.id)}</div>
+    <span class="m-no">No. ${String(n).padStart(2, '0')}</span>
+    <h3 class="m-name">${esc(r.name)}</h3>
+    ${DESC[r.id] ? `<p class="m-desc">${esc(DESC[r.id])}</p>` : ''}
+    <p class="m-ings">${esc(provOf(s).split(' · ').join(', '))}</p>
+    <div class="m-foot">
+      <div class="m-glass" title="${esc(r.gl)}" aria-hidden="true">${glassSVG(r.gl)}</div>
+      <table class="m-facts">${rows.map(([k, v]) => `<tr><th scope="row">${esc(k)}</th><td>${esc(v)}</td></tr>`).join('')}</table>
+    </div>
+  </article>`;
+}
+function renderKarte() {
+  const el = $('menu');
+  if (dbState === 'loading') { el.innerHTML = '<p class="m-note">Die Karte wird geladen …</p>'; return; }
+  const known = ready();
+  const list = RECIPES.map((r) => ({ r, s: recipeState(r) })).filter(({ r, s }) => known ? s.ok : r.src !== 'einkauf');
+  const others = list.filter(({ r }) => r.src !== 'mine');
+  const secs = [
+    { t: 'House Specials', items: list.filter(({ r }) => r.src === 'mine') },
+    ...BASES.map((b) => ({ t: b, items: others.filter(({ r }) => baseOf(r) === b) }))
+  ].filter((x) => x.items.length);
+  const note = known ? '' : '<p class="m-note">Was heute geht, verrät dir der Gastgeber.</p>';
+  let n = 0;
+  el.innerHTML = note + (secs.length
+    ? secs.map((sec) => `<section class="m-sec"><h2 class="m-head">${esc(sec.t)}</h2><div class="m-items">${sec.items.map(({ r, s }) => menuItemHTML(r, s, ++n)).join('')}</div></section>`).join('')
+    : '<p class="m-note">Heute ist die Bar leer getrunken. Zeit für einen Einkauf.</p>');
+}
+
+/* ---------- Frisch & Vorrat ---------- */
+function renderFresh() {
+  const off = !ready() || !canWrite;
+  $('fresh-box').innerHTML = FRESH.map((f) =>
+    `<button class="chip-btn" type="button" data-fresh="${f.k}" aria-pressed="${pantry[f.k] === true}" ${off ? 'disabled' : ''}>${esc(f.l)}</button>`).join('');
+}
+
+/* ---------- Bestand ---------- */
+function bestandNotice() {
+  if (dbState === 'loading') return 'Bestand wird geladen …';
+  if (dbState === 'slow') return 'Der Bestand ist gerade nicht erreichbar. Die Seite versucht es weiter.';
+  if (dbState === 'unavailable') return 'Die Datenbank ist noch nicht eingerichtet. Siehe README.';
+  if (dbState === 'error') return 'Der Bestand lässt sich nicht laden. Prüfe die Firestore-Regeln oder lade die Seite neu.';
+  return '';
+}
+
+function renderBestand() {
+  const active = document.activeElement && document.activeElement.id;
+  const listEl = $('b-list');
+  const n = bestandNotice();
+  $('b-add-toggle').disabled = !ready() || !canWrite;
+  if (n) { listEl.innerHTML = `<div class="notice">${esc(n)}</div>`; $('b-summary').textContent = ''; return; }
+  if (!bottles.length) {
+    listEl.innerHTML = '<div class="notice">Noch keine Flaschen erfasst. Über „+ Flasche hinzufügen“ trägst du die erste ein'
+      + (canWrite ? `, oder du übernimmst deinen bisherigen Bestand (${SEED_BOTTLES.length} Flaschen).<div style="margin-top:10px"><button class="btn" type="button" data-act="seed">Startbestand importieren</button></div>` : '.')
+      + '</div>';
+    $('b-summary').textContent = '';
+    return;
+  }
+  const low = bottles.filter((b) => b.status === 'fastleer').length;
+  const empty = bottles.filter((b) => b.status === 'leer').length;
+  $('b-summary').textContent = `${bottles.length} Flaschen · ${low} fast leer · ${empty} leer` + (canWrite ? '' : ' · nur Lesezugriff');
+  const q = norm(bfilt.q);
+  const shown = bottles.filter((b) => (!bfilt.low || b.status === 'fastleer' || b.status === 'leer') &&
+    (!q || norm(b.name).includes(q) || norm(KINDS[b.kind]).includes(q) || (b.history || []).some((h) => norm(h).includes(q))));
+  const cats = [...CATS, ...new Set(shown.map((b) => b.cat).filter((c) => !CATS.includes(c)))];
+  const html = cats.map((cat) => {
+    const items = sorted(shown.filter((b) => b.cat === cat));
+    if (!items.length) return '';
+    return `<div class="cat"><h2>${esc(cat)} <span class="count">${items.length}</span></h2><div class="rows">${items.map(rowHTML).join('')}</div></div>`;
+  }).join('');
+  listEl.innerHTML = html || '<div class="notice">Keine Flasche passt zu diesem Filter.</div>';
+  if (active) {
+    const el = $(active);
+    if (el) { el.focus(); if (el.setSelectionRange && el.type === 'text') { const l = el.value.length; el.setSelectionRange(l, l); } }
+  }
+}
+
+function rowHTML(b) {
+  const st = STATUS.find((s) => s.v === b.status) || STATUS[0];
+  const dis = canWrite ? '' : 'disabled';
+  const hist = (b.history || []).length ? ` · ersetzt ${esc(b.history[b.history.length - 1])}` : '';
+  let edit = '';
+  if (openEdit && openEdit.id === b.id && openEdit.mode === 'replace') {
+    const d = drafts[b.id] || { name: '', kind: b.kind };
+    edit = `<form class="edit" data-form="replace" data-id="${esc(b.id)}">
+      <p>Was kommt statt <strong>${esc(b.name)}</strong> ins Regal?</p>
+      <label>Neue Flasche<input type="text" id="rep-name-${esc(b.id)}" list="ga-picks" value="${esc(d.name)}" placeholder="${esc(gaPickFor(b.kind) || 'Name der Flasche')}" autocomplete="off"></label>
+      <label>Art<select id="rep-kind-${esc(b.id)}">${kindOptions(d.kind)}</select></label>
+      <button class="btn" type="submit">Ersetzen</button>
+      <button class="btn ghost" type="button" data-act="cancel">Abbrechen</button>
+    </form>`;
+  } else if (openEdit && openEdit.id === b.id && openEdit.mode === 'remove') {
+    edit = `<div class="edit"><p><strong>${esc(b.name)}</strong> aus dem Bestand entfernen?</p>
+      <button class="btn danger" type="button" data-act="confirm-remove" data-id="${esc(b.id)}">Entfernen</button>
+      <button class="btn ghost" type="button" data-act="cancel">Abbrechen</button></div>`;
+  }
+  return `<div class="row ${b.status === 'leer' ? 'is-empty' : ''}">
+    <div class="row-main">
+      <span class="bottle ${b.status === 'leer' ? 'empty' : ''}" style="--lvl:${st.lvl}%" aria-hidden="true"></span>
+      <div class="b-name"><strong>${esc(b.name)}</strong><span class="sub">${esc(KINDS[b.kind] || b.kind)}${hist}</span></div>
+      <div class="seg" role="group" aria-label="Füllstand ${esc(b.name)}">${STATUS.map((s) =>
+        `<button type="button" data-act="status" data-id="${esc(b.id)}" data-v="${s.v}" aria-pressed="${s.v === b.status}" ${dis}>${s.l}</button>`).join('')}</div>
+      ${canWrite ? `<div class="acts">
+        <button class="link-btn" type="button" data-act="replace" data-id="${esc(b.id)}">Ersetzen</button>
+        <button class="link-btn danger" type="button" data-act="remove" data-id="${esc(b.id)}">Entfernen</button>
+      </div>` : ''}
+    </div>${edit}</div>`;
+}
+
+function kindOptions(sel) {
+  return Object.entries(KINDS).map(([k, l]) => `<option value="${k}" ${k === sel ? 'selected' : ''}>${esc(l)}</option>`).join('');
+}
+function gaPickFor(kind) {
+  const g = GA.find((g) => g.kinds && g.kinds.includes(kind));
+  return g ? g.pick.replace(/[„“]/g, '') : '';
+}
+
+/* Schreiben: pro Dokument eins nach dem anderen */
+const queues = {};
+function write(id, fn, okMsg) {
+  queues[id] = (queues[id] || Promise.resolve()).then(fn).then(() => { if (okMsg) toast(okMsg); }).catch(onWriteErr);
+  return queues[id];
+}
+function onWriteErr(e) {
+  const code = e && e.code;
+  if (code === 'invalid_argument') { canWrite = false; renderAll(); toast('Du hast hier nur Lesezugriff, die Änderung wurde nicht gespeichert.'); }
+  else if (code === 'quota_exceeded') toast('Der Speicher ist voll. Entferne alte Flaschen und versuch es noch mal.');
+  else toast('Konnte nicht speichern. Versuch es gleich noch mal.');
+}
+
+function setStatus(id, v) {
+  const b = bottles.find((x) => x.id === id);
+  if (!b || b.status === v || !db) return;
+  write(id, () => db.doc('bottles/' + id).update({ status: v }));
+}
+function doReplace(id) {
+  const b = bottles.find((x) => x.id === id);
+  if (!b || !db) return;
+  const name = ($('rep-name-' + id).value || '').trim();
+  const kind = $('rep-kind-' + id).value;
+  if (!name) { toast('Gib einen Namen für die neue Flasche ein.'); $('rep-name-' + id).focus(); return; }
+  const history = [...(b.history || []), b.name].slice(-10);
+  const old = b.name;
+  openEdit = null; delete drafts[id];
+  write(id, () => db.doc('bottles/' + id).update({ name, kind, status: 'voll', history }), `${old} ersetzt durch ${name}.`);
+  renderBestand();
+}
+function doRemove(id) {
+  const b = bottles.find((x) => x.id === id);
+  if (!b || !db) return;
+  openEdit = null;
+  write(id, () => db.doc('bottles/' + id).delete(), `${b.name} entfernt.`);
+  renderBestand();
+}
+
+/* ---------- Einkauf ---------- */
+function gaStatus(g) {
+  if (!g.kinds) return { s: 'info', have: [] };
+  const have = sorted(bottles.filter((b) => g.kinds.includes(b.kind) && isAvail(b)));
+  if (!have.length) return { s: g.optional ? 'optional' : 'missing', have };
+  if (have.every((b) => b.status === 'fastleer')) return { s: 'low', have };
+  if (g.want && !have.some((b) => b.name.includes(g.want))) return { s: 'partial', have };
+  return { s: 'ok', have };
+}
+function recipeLinks(kinds) {
+  const miss = [], sub = [];
+  for (const r of RECIPES) {
+    const s = recipeState(r);
+    if (s.missing.some((o) => kinds.includes(o.i.k))) miss.push(r.name);
+    else if (s.subs.some((o) => kinds.includes(o.i.k))) sub.push(r.name);
+  }
+  return { miss, sub };
+}
+
+function shopItems() {
+  const items = [];
+  for (const b of sorted(bottles.filter((b) => b.status === 'leer' || b.status === 'fastleer'))) {
+    const pick = gaPickFor(b.kind);
+    items.push({ title: b.name, detail: (b.status === 'leer' ? 'Leer' : 'Fast leer') + (pick && !b.name.includes(pick) ? ` · Alternative laut Grundausstattung: ${pick}` : '') });
+  }
+  for (const g of GA) {
+    const st = gaStatus(g);
+    if (st.s === 'missing') {
+      const { miss } = recipeLinks(g.kinds);
+      items.push({ title: `${g.t}: ${g.pick.replace(/[„“]/g, '')}`, detail: 'Fehlt' + (miss.length ? ` · für ${miss.join(', ')}` : '') });
+    } else if (st.s === 'partial') {
+      items.push({ title: `${g.t}: ${g.pick}`, detail: `Upgrade · ${g.note}` });
+    }
+  }
+  for (const f of FRESH) {
+    if (pantry[f.k] === true) continue;
+    const blocked = RECIPES.filter((r) => {
+      const s = recipeState(r);
+      return s.missing.length === 0 && s.freshMissing.some((o) => o.x.key === f.k);
+    }).map((r) => r.name);
+    if (blocked.length) items.push({ title: f.l, detail: `Frisch · für ${blocked.join(', ')}` });
+  }
+  return items;
+}
+
+function renderEinkauf() {
+  const shop = $('shop');
+  if (!ready()) {
+    shop.innerHTML = `<div class="muted">${esc(bestandNotice() || 'Die Einkaufsliste braucht den Bestand.')}</div>`;
+  } else {
+    const items = shopItems();
+    const text = items.map((i) => `- ${i.title} (${i.detail})`).join('\n');
+    shop.innerHTML = items.length ? `
+      <ul>${items.map((i) => `<li><span class="box" aria-hidden="true"></span><div>${esc(i.title)}<small>${esc(i.detail)}</small></div></li>`).join('')}</ul>
+      <div><button class="btn ghost" type="button" id="copy-shop">Liste kopieren</button></div>
+      <textarea id="shop-text" readonly hidden aria-label="Einkaufsliste als Text">${esc(text)}</textarea>`
+      : '<div class="muted">Nichts zu kaufen. Alles da, nichts leer.</div>';
+  }
+  $('ga').innerHTML = GA.map((g) => {
+    const st = ready() ? gaStatus(g) : { s: 'unknown', have: [] };
+    const pill = {
+      ok: '<span class="pill ok">Im Bestand</span>', low: '<span class="pill warn">Fast leer</span>',
+      partial: '<span class="pill warn">Nicht 47 %</span>', missing: '<span class="pill bad">Fehlt</span>',
+      optional: '<span class="pill neutral">Optional</span>', info: '<span class="pill neutral">Hinweis</span>', unknown: ''
+    }[st.s];
+    const det = [];
+    if (g.note) det.push(esc(g.note));
+    if (st.have.length) det.push(`Im Bestand: <b>${esc(st.have.map((b) => b.name).join(', '))}</b>`);
+    if (ready() && g.kinds) {
+      const { miss, sub } = recipeLinks(g.kinds);
+      if (miss.length) det.push(`Fehlt für: ${esc(miss.join(', '))}`);
+      if (sub.length) det.push(`Ersatz in: ${esc(sub.join(', '))}`);
+    }
+    return `<div class="ga-item">
+      <span class="kind">${esc(g.t)}</span>
+      <div><div class="pick">${esc(g.pick)}${g.unverified ? '<span class="unverified">Name ungeprüft</span>' : ''}</div>${det.length ? `<div class="det">${det.join('<br>')}</div>` : ''}</div>
+      <div>${pill}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ---------- Allgemein ---------- */
+const hostUI = () => role === 'host' && !guestMode;
+function renderSub() {
+  if (!hostUI()) { $('sub').textContent = 'Die Karte'; return; }
+  if (!ready()) { $('sub').textContent = bestandNotice() || ''; return; }
+  const n = bottles.filter(isAvail).length;
+  const now = RECIPES.filter((r) => recipeState(r).ok).length;
+  $('sub').textContent = `${n} Flaschen offen · ${now} Drinks gehen gerade`;
+}
+function renderAll() { renderSub(); renderKarte(); renderRecipes(); renderFresh(); renderBestand(); renderEinkauf(); }
+function applyRole() {
+  document.querySelector('nav.tabs').hidden = !hostUI();
+  document.querySelectorAll('.host-only').forEach((el) => { el.hidden = !hostUI(); });
+  $('guest-exit').hidden = !(role === 'host' && guestMode);
+  showTab();
+  renderAll();
+}
+function setGuestMode(on) {
+  guestMode = on;
+  try { localStorage.setItem('hausbar-guest', on ? '1' : '0'); } catch (e) { /* ohne Speicher */ }
+  if (on) location.hash = '#karte';
+  renderAuth();
+  applyRole();
+  window.scrollTo(0, 0);
+}
+
+let toastTimer;
+function toast(msg) {
+  const t = $('toast');
+  t.textContent = msg; t.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.hidden = true; }, 3200);
+}
+
+const TABS = ['karte', 'rezepte', 'bestand', 'einkauf'];
+function showTab() {
+  const h = location.hash.slice(1);
+  const t = hostUI() && TABS.includes(h) ? h : 'karte';
+  for (const x of TABS) $('v-' + x).hidden = x !== t;
+  document.querySelectorAll('nav.tabs a').forEach((a) => a.setAttribute('aria-current', a.dataset.tab === t ? 'page' : 'false'));
+}
+
+/* ---------- Ereignisse ---------- */
+$('src-chips').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-src]'); if (!b) return;
+  filt.src = b.dataset.src;
+  document.querySelectorAll('#src-chips .chip-btn').forEach((c) => c.setAttribute('aria-pressed', c === b));
+  renderRecipes();
+});
+$('r-search').addEventListener('input', (e) => { filt.q = e.target.value; renderRecipes(); });
+$('b-search').addEventListener('input', (e) => { bfilt.q = e.target.value; renderBestand(); });
+$('b-low').addEventListener('click', (e) => { bfilt.low = !bfilt.low; e.currentTarget.setAttribute('aria-pressed', bfilt.low); renderBestand(); });
+$('b-add-toggle').addEventListener('click', (e) => {
+  const f = $('add-form'); f.hidden = !f.hidden;
+  e.currentTarget.setAttribute('aria-pressed', !f.hidden);
+  if (!f.hidden) $('add-name').focus();
+});
+$('add-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!db || !canWrite) return;
+  const name = $('add-name').value.trim();
+  if (!name) { toast('Gib einen Namen für die Flasche ein.'); $('add-name').focus(); return; }
+  const doc = { name, cat: $('add-cat').value, kind: $('add-kind').value, status: 'voll', history: [], order: Date.now() };
+  try {
+    await db.collection('bottles').add(doc);
+    $('add-name').value = '';
+    toast(`${name} hinzugefügt.`);
+  } catch (err) { onWriteErr(err); }
+});
+
+$('b-list').addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-act]'); if (!btn) return;
+  const id = btn.dataset.id, act = btn.dataset.act;
+  if (act === 'status') setStatus(id, btn.dataset.v);
+  else if (act === 'replace') {
+    const b = bottles.find((x) => x.id === id);
+    drafts[id] = drafts[id] || { name: '', kind: b ? b.kind : 'other' };
+    openEdit = { id, mode: 'replace' }; renderBestand();
+    const el = $('rep-name-' + id); if (el) el.focus();
+  }
+  else if (act === 'remove') { openEdit = { id, mode: 'remove' }; renderBestand(); }
+  else if (act === 'cancel') { if (openEdit) delete drafts[openEdit.id]; openEdit = null; renderBestand(); }
+  else if (act === 'confirm-remove') doRemove(id);
+});
+$('b-list').addEventListener('submit', (e) => {
+  const f = e.target.closest('[data-form="replace"]'); if (!f) return;
+  e.preventDefault(); doReplace(f.dataset.id);
+});
+$('b-list').addEventListener('input', (e) => {
+  const m = e.target.id && e.target.id.match(/^rep-(name|kind)-(.+)$/); if (!m) return;
+  drafts[m[2]] = drafts[m[2]] || {};
+  drafts[m[2]][m[1]] = e.target.value;
+});
+$('b-list').addEventListener('change', (e) => {
+  const m = e.target.id && e.target.id.match(/^rep-kind-(.+)$/); if (!m) return;
+  drafts[m[1]] = drafts[m[1]] || {};
+  drafts[m[1]].kind = e.target.value;
+});
+$('shop').addEventListener('click', (e) => {
+  if (e.target.id !== 'copy-shop') return;
+  const ta = $('shop-text');
+  const text = ta.value;
+  const fallback = () => { ta.hidden = false; ta.focus(); ta.select(); toast('Kopieren geht hier nicht direkt. Die Liste ist markiert.'); };
+  try {
+    navigator.clipboard.writeText(text).then(() => toast('Einkaufsliste kopiert.'), fallback);
+  } catch (err) { fallback(); }
+});
+$('fresh-box').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-fresh]');
+  if (!b || !db || !canWrite || !ready()) return;
+  const k = b.dataset.fresh;
+  pantry = { ...pantry, [k]: pantry[k] !== true };
+  const items = { ...pantry };
+  renderAll();
+  write('pantry', () => db.doc('pantry/fresh').set({ items }));
+});
+$('guest-on').addEventListener('click', () => setGuestMode(true));
+$('guest-exit').addEventListener('click', () => setGuestMode(false));
+window.addEventListener('hashchange', showTab);
+
+/* ---------- Start ---------- */
+$('add-cat').innerHTML = CATS.map((c) => `<option>${esc(c)}</option>`).join('');
+$('add-kind').innerHTML = kindOptions('rye');
+$('ga-picks').innerHTML = [...new Set([...GA.map((g) => g.pick.replace(/[„“]/g, '')), 'Noilly Prat Rouge', 'Pierre Ferrand Dry Curaçao', 'Elijah Craig 12', 'Carpano Antica Formula'])]
+  .map((p) => `<option value="${esc(p)}"></option>`).join('');
+showTab();
+renderAll();
+
+/* ---------- Firebase ---------- */
+/* Kleine Hülle um Firestore, damit der restliche Code dieselben Aufrufe nutzt wie vorher */
+function wrapErr(e) {
+  const c = e && e.code;
+  return { code: c === 'permission-denied' ? 'invalid_argument' : c === 'resource-exhausted' ? 'quota_exceeded' : 'unavailable', message: e && e.message };
+}
+const guard = (p) => p.catch((e) => { throw wrapErr(e); });
+function makeDb(fs) {
+  return {
+    doc: (path) => {
+      const ref = doc(fs, path);
+      return {
+        update: (d) => guard(updateDoc(ref, d)),
+        set: (d) => guard(setDoc(ref, d)),
+        delete: () => guard(deleteDoc(ref)),
+        onSnapshot: (next, err) => onSnapshot(ref, (s) => next({ id: s.id, exists: s.exists(), data: () => s.data(), metadata: s.metadata }), err)
+      };
+    },
+    collection: (path) => {
+      const ref = collection(fs, path);
+      return {
+        add: (d) => guard(addDoc(ref, d)),
+        onSnapshot: (next, err) => onSnapshot(ref, (s) => next({ docs: s.docs.map((d) => ({ id: d.id, data: () => d.data() })), metadata: s.metadata }), err)
+      };
+    }
+  };
+}
+
+let fsRef = null;
+let auth = null;
+let currentUser = null;
+
+function showSetup(html) {
+  const el = $('setup');
+  el.innerHTML = html;
+  el.hidden = !html;
+}
+function renderAuth() {
+  $('login').hidden = !auth || !!currentUser || guestMode;
+  $('logout').hidden = !currentUser || guestMode;
+  if (!auth) return;
+  if (currentUser && !OWNER_UID) {
+    showSetup(`<strong>Fast fertig.</strong> Deine Nutzer-ID lautet<br><code>${esc(currentUser.uid)}</code><br>Trag sie in <code>config.js</code> bei <code>OWNER_UID</code> und in den Firestore-Regeln ein (siehe README), dann lade <code>config.js</code> neu hoch.`);
+  } else if (currentUser && currentUser.uid !== OWNER_UID) {
+    showSetup('Mit diesem Konto kannst du die Karte ansehen, aber die Bar nicht verwalten.');
+  } else {
+    showSetup('');
+  }
+}
+
+async function importSeed() {
+  if (!fsRef || !canWrite) return;
+  try {
+    const batch = writeBatch(fsRef);
+    for (const { id, ...data } of SEED_BOTTLES) batch.set(doc(fsRef, 'bottles', id), data);
+    batch.set(doc(fsRef, 'pantry', 'fresh'), { items: SEED_PANTRY });
+    await batch.commit();
+    toast(`${SEED_BOTTLES.length} Flaschen importiert.`);
+  } catch (e) { onWriteErr(wrapErr(e)); }
+}
+$('b-list').addEventListener('click', (e) => { if (e.target.closest('[data-act="seed"]')) importSeed(); });
+
+const configured = !!(firebaseConfig && firebaseConfig.apiKey && !String(firebaseConfig.apiKey).startsWith('DEIN'));
+if (!configured) {
+  role = 'guest'; canWrite = false; dbState = 'unavailable';
+  showSetup('Firebase ist noch nicht eingerichtet. Trag die Projektdaten in <code>config.js</code> ein (siehe README).');
+  applyRole();
+} else {
+  const app = initializeApp(firebaseConfig);
+  fsRef = getFirestore(app);
+  auth = getAuth(app);
+  db = makeDb(fsRef);
+  const timer = setTimeout(() => { if (dbState === 'loading') { dbState = 'slow'; renderAll(); } }, 10000);
+
+  onAuthStateChanged(auth, (u) => {
+    currentUser = u;
+    role = u && OWNER_UID && u.uid === OWNER_UID ? 'host' : 'guest';
+    canWrite = role === 'host';
+    renderAuth();
+    applyRole();
+  });
+  $('login').addEventListener('click', () => {
+    signInWithPopup(auth, new GoogleAuthProvider()).catch((e) => {
+      if (e && e.code !== 'auth/popup-closed-by-user') toast('Anmeldung hat nicht geklappt. Ist die Domain in Firebase freigegeben?');
+    });
+  });
+  $('logout').addEventListener('click', () => { setGuestMode(false); signOut(auth); });
+
+  db.doc('pantry/fresh').onSnapshot((snap) => {
+    pantry = snap.exists ? { ...((snap.data() || {}).items || {}) } : {};
+    renderAll();
+  }, () => { /* Vorrat bleibt leer */ });
+  db.collection('bottles').onSnapshot((snap) => {
+    bottles = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    if (!snap.metadata.fromCache) clearTimeout(timer);
+    dbState = 'ready';
+    renderAll();
+  }, () => { clearTimeout(timer); dbState = 'error'; renderAll(); });
+}
+renderAuth();
+</script>
+</body>
+</html>
